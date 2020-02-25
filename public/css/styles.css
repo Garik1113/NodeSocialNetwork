@@ -1,0 +1,289 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+.navbar-wrapper {
+  width: 100%;
+  height: 50px;
+  background: rgb(40, 201, 230);
+}
+.links {
+  color: #ffffff;
+  font-size: 18px;
+}
+.links:hover {
+  color: #000000;
+}
+
+.homepage-wrapper {
+  width: 100%;
+  height: 100%;
+  background: rgb(217, 235, 236);
+}
+
+/* Sign up and login pages */
+.form-wrapper {
+  width: 350px;
+  margin: 100px auto;
+  background: #ffffff;
+  box-shadow: 0px 5px 5px 6px;
+  border-radius: 2px;
+  text-align: center;
+}
+.input-type-text {
+  width: 300px;
+  height: 40px;
+  margin-bottom: 10px;
+  margin-left: 25px;
+  border: none;
+  border-bottom: 2px solid rgb(192, 19, 140);
+}
+.input-type-btn {
+  width: 120px;
+  height: 40px;
+  border: none;
+  background: rgb(143, 13, 78);
+  border-radius: 5px;
+  margin: 15px 115px;
+}
+.input-type-btn:hover {
+  color: #ffffff;
+}
+
+small {
+  color: red;
+}
+
+/* Sign up and login pages */
+
+/* profile page  */
+.profile-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+.profile-image {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+}
+
+.name-text-wrapper {
+  font-size: 18px;
+  color: #000000;
+}
+.name-text-wrapper:hover {
+  text-decoration: none;
+  color: #000000;
+}
+.bg-yellow {
+  background: #e2d40a;
+}
+
+.log-out {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.log-out:hover {
+  color: #0de278;
+}
+.main-wrapper {
+  width: 100%;
+  background: #e2d40a;
+  margin: 0 auto;
+  margin-bottom: 50px;
+}
+
+.sittings-wrapper {
+  width: 120px;
+  text-align: center;
+  border: none;
+  background: #e2d40a;
+  height: 100px;
+  font-size: 20px;
+  color: #ffffff;
+  line-height: 100px;
+}
+
+.sittings-wrapper:hover {
+  text-align: center;
+  background: rgb(204, 203, 124);
+  height: 100px;
+}
+
+/* for searching users */
+
+#list-wrapper {
+  position: absolute;
+  z-index: 100;
+  margin-top: 70px;
+  right: 50px;
+}
+
+.finded-list-item {
+  display: flex;
+  justify-content: space-between;
+  word-wrap: none;
+  list-style-type: none;
+  font-size: 18px;
+  margin-top: 0.4rem;
+  padding: 0.4rem;
+  color: #ffffff;
+  background: #e2d40a;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* for searching users end */
+
+.photos-list-group {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 100px;
+}
+.image-list-item {
+  list-style-type: none;
+  margin: 0.5rem;
+  width: 250px;
+  margin-bottom: 50px;
+  box-sizing: border-box;
+}
+
+.inform-about-updates {
+  color: #0de278;
+  font-size: 20px;
+  text-align: center;
+}
+.reg-image {
+  width: 250px;
+  height: 250px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.getFullImage {
+  width: 700px;
+  height: 500px;
+  position: absolute;
+  top: 10px;
+  left: 200px;
+  z-index: 150;
+  box-shadow: 20px 20px 20px 10px;
+}
+.upload-Photo-inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.upload-Photo-inputfile + label {
+  font-size: 1.25em;
+  font-weight: 700;
+  color: white;
+  width: 200px;
+  height: 45px;
+  text-align: center;
+  cursor: pointer;
+  line-height: 45px;
+  background-color: rgb(184, 197, 6);
+  display: inline-block;
+}
+.upload-Photo-inputfile:focus + label,
+.upload-Photo-inputfile + label:hover {
+  background-color: rgb(217, 255, 0);
+  color: #000000;
+}
+
+.upload-photo-btn {
+  width: 100px;
+  height: 45px;
+  color: #ffffff;
+  background: #e2d40a;
+  border: none;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 45px;
+}
+
+.upload-photo-btn:hover {
+  color: #000000;
+}
+
+.changeForm {
+  width: auto;
+  height: 350px;
+  border: none;
+  border-radius: 5px;
+  background: #ffffff;
+  box-shadow: 1px 10px 15px 1px;
+  box-sizing: border-box;
+  text-align: center;
+  margin-bottom: 150px;
+  padding-top: 30px;
+}
+
+.change-input-wrapper {
+  width: 400px;
+  margin: 0 auto;
+}
+.change-input-wrapper input {
+  width: 400px;
+  margin: 10px;
+  border: none;
+  border-bottom: 1px solid #e2d40a;
+}
+
+.change-input-wrapper button {
+  width: 200px;
+  height: 45px;
+  border: none;
+  color: #ffffff;
+  font-size: 20px;
+  background: #e2d40a;
+  border-radius: 3px;
+}
+
+.change-input-wrapper button:hover {
+  color: #000000;
+}
+.close {
+  display: none;
+}
+
+#inform-about-changes {
+  font-size: 20px;
+  color: #0de278;
+}
+/* profile page end */
+
+/* footer page */
+
+footer {
+  position: fixed;
+  height: 70px;
+  bottom: 0;
+  width: 100%;
+  background: #e2d40a;
+  margin-top: 100px;
+}
+.footer-item {
+  text-align: center;
+}
+.footer-item a {
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 22px;
+  line-height: 70px;
+}
+
+.footer-item a:hover {
+  color: #000000;
+}
+
+/* footer page end */

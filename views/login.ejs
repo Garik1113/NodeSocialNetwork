@@ -1,0 +1,30 @@
+<html lang="en">
+  <%- include('./partials/head') %>
+  <body>
+    <%- include('./partials/navbar') %>
+    <div class="container">
+      <form action="/tryLogin" method="POST" class="form-wrapper">
+        <h1 style="text-align: center;">Login</h1>
+        <input
+          type="text"
+          placeholder="Email"
+          name="email"
+          value="<%= email? email : ''  %>"
+          class="input-type-text"
+        />
+        <small><%= mailExistError ? mailExistError : '' %></small>
+        <small><%= errors.email ? errors.email.msg : '' %></small>
+        <input
+          type="password"
+          placeholder="Password"
+          name="password"
+          class="input-type-text"
+        />
+        <small><%= errors.password ? errors.password.msg : '' %></small>
+        <small><%= userError? userError : '' %></small>
+        <input type="submit" value="Login" class="input-type-btn" />
+      </form>
+    </div>
+    <%- include('./partials/footer') %>
+  </body>
+</html>

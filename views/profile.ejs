@@ -1,0 +1,170 @@
+<html lang="en">
+  <%- include('./partials/head') %>
+  <body style="margin: 0; padding: 0;">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <nav class="navbar fixed-top bg-yellow">
+            <div>
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a class="nav-link log-out" href="/login">Log Out</a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <form class="form-inline mt-2 mt-md-0">
+                <input
+                  class="form-control mr-sm-2"
+                  type="text"
+                  placeholder="Search"
+                  id="search-input"
+                />
+                <button
+                  class="btn btn-outline-success my-2 my-sm-0"
+                  type="submit"
+                  id="search-btn"
+                >
+                  Search
+                </button>
+              </form>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <ul id="list-wrapper"></ul>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div class="jumbotron mt-3">
+            <div class="profile-wrapper">
+              <div class="row align-items-center">
+                <div class="col-3">
+                  <div class="profilePhoto-wrapper">
+                    <img
+                      src="<%= user? user[0].profile_image ? user[0].profile_image : '/uploads/images/avatar.png' : '' %>"
+                      class="profile-image"
+                      alt=""
+                    />
+                  </div>
+                  <div class="name-wrapper d-flex align-items-center">
+                    <a href="/profile" class="d-flex name-text-wrapper">
+                      <h3 style="margin: 10px;">
+                        <%= user? user[0].name : '' %>
+                      </h3>
+                      <h3 style="margin: 10px;">
+                        <%= user? user[0].surname : '' %>
+                      </h3>
+                    </a>
+                  </div>
+                </div>
+                <div class="col-3"></div>
+                <div class="col-6 ">
+                  <form
+                    action="/uploadProfilePhoto"
+                    method="POST"
+                    enctype="multipart/form-data"
+                  >
+                    <div class="input-group">
+                      <div class="custom-file">
+                        <input
+                          type="file"
+                          name="profilePhoto"
+                          class="custom-file-input"
+                        />
+                        <label class="custom-file-label"
+                          >Change profile photo</label
+                        >
+                      </div>
+                      <div class="input-group-append">
+                        <button
+                          class="btn btn-outline-primary"
+                          type="submit"
+                          id="inputGroupFileAddon04"
+                        >
+                          Change
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row main-wrapper">
+        <div class="col-2 offset-2">
+          <div>
+            <button class="sittings-wrapper" type="submit">Friends</button>
+          </div>
+        </div>
+        <div class="col-2">
+          <div>
+            <button class="sittings-wrapper" type="submit">Messages</button>
+          </div>
+        </div>
+        <div class="col-2">
+          <div>
+            <button id="photos-btn" type="submit" class="sittings-wrapper">
+              Photos
+            </button>
+          </div>
+        </div>
+        <div class="col-2">
+          <div>
+            <button class="sittings-wrapper" type="submit" id="sittings-btn">
+              Sittings
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <form id="changeForm" class="changeForm close">
+            <h1>Change Information</h1>
+            <div class="change-input-wrapper">
+              <input type="text" name="name" id="nameInput" />
+              <input type="text" name="surname" id="surnameInput" />
+              <input type="text" name="age" id="ageInput" />
+              <small id="inform-about-changes"></small>
+              <button id="saveChanges">Save</button>
+            </div>
+          </form>
+          <div class="photos-wrapper close">
+            <form
+              action="/uploadPhoto"
+              method="POST"
+              enctype="multipart/form-data"
+            >
+              <input
+                type="file"
+                name="image"
+                id="file"
+                class="upload-Photo-inputfile"
+              />
+              <label for="file">Upload photo</label>
+              <button
+                type="submit"
+                class="upload-photo-btn"
+                id="uploadPhotoBtn"
+              >
+                Add
+              </button>
+            </form>
+            <ul class="photos-list-group"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%- include('./partials/footer') %>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/js/index.js"></script>
+  </body>
+</html>
