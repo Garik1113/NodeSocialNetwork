@@ -120,7 +120,7 @@ class Controller {
       const findedUsers = await (function() {
         return new Promise((resolve, reject) => {
           connection.query(
-            `SELECT * FROM users WHERE name LIKE '${name}%' LIMIT 5 `,
+            `SELECT * FROM users WHERE name LIKE '${name}%' AND ID != ${req.session.userId} LIMIT 5 `,
             (err, data) => {
               if (err) throw err;
               resolve(data);
@@ -147,7 +147,6 @@ class Controller {
           );
         });
       })();
-
       res.render('profile', {
         user,
         findedUsers: ''
@@ -298,6 +297,88 @@ class Controller {
         email: ''
       });
     }
+  }
+
+  //about relationship status  0 - Pending, 1 - Accepting(friends), 2 - Deslined, 3 - Block
+
+  async sendRequest(req, res) {
+    const relationship = await (function() {
+      return new Promise((resolve, reject) => {
+        connection.query(
+          `SELECT * FROM relationships WHERE user_one_id = ${req.session.userId} AND user_two_id = ${req.body.user_two_id}`,
+          (err, data) => {
+            if (err) throw err;
+            resolve(data);
+          }
+        );
+      });
+    })();
+
+    if (relationship.length === 0) {
+      connection.query(
+        `INSERT INTO relationships (user_one_id, user_two_id, status, action_user_id) VALUES(${
+          req.session.userId
+        }, ${req.body.user_two_id}, ${0}, ${req.session.userId})`,
+        (err, data) => {
+          if (err) throw err;
+        }
+      );
+    }
+  }
+
+  async checkFriendRequests(req, res) {
+    const friendRequestsInform = await (function() {
+      return new Promise((resolve, reject) => {
+        connection.query(
+          `SELECT * FROM users JOIN relationships ON user_one_id = users.ID
+              WHERE(user_one_id = ${req.session.userId} OR user_two_id = ${req.session.userId})
+              AND status = 0 AND action_user_id != ${req.session.userId}`,
+          (err, data) => {
+            if (err) throw err;
+            resolve(data);
+          }
+        );
+      });
+    })();
+
+    if (friendRequestsInform) {
+      res.send({ friendRequestsInform });
+    }
+    res.end();
+  }
+
+  async acceptFriendRequest(req, res) {
+    await connection.query(
+      `UPDATE relationships SET status = ${1}, action_user_id = ${
+        req.session.userId
+      }
+     WHERE user_one_id =${req.body.userId} AND user_two_id = ${
+        req.session.userId
+      }`,
+      (err, data) => {
+        if (err) throw err;
+      }
+    );
+  }
+
+  deslineFriendRequest(req, res) {
+    connection.query(
+      `UPDATE relationships SET status = ${2}, action_user_id = ${
+        req.session.userId
+      }
+     WHERE user_one_id =${req.body.userId} AND user_two_id = ${
+        req.session.userId
+      }`,
+      (err, data) => {
+        if (err) throw err;
+      }
+    );
+  }
+
+  async getFriendList(req, res) {
+    const friendLis = await function() {
+      return new Promise((response, reject) => ({}));
+    };
   }
 }
 module.exports = new Controller();

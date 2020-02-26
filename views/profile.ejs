@@ -12,6 +12,7 @@
                 </li>
               </ul>
             </div>
+
             <div>
               <form class="form-inline mt-2 mt-md-0">
                 <input
@@ -41,7 +42,7 @@
         <div class="col-12">
           <div class="jumbotron mt-3">
             <div class="profile-wrapper">
-              <div class="row align-items-center">
+              <div class="row ">
                 <div class="col-3">
                   <div class="profilePhoto-wrapper">
                     <img
@@ -61,8 +62,13 @@
                     </a>
                   </div>
                 </div>
-                <div class="col-3"></div>
-                <div class="col-6 ">
+                <div class="col-5">
+                  <div class="notifications-wrapper text-center">
+                    <button id="notificationBtn">Notifications</button>
+                    <ul id="friendRequestList"></ul>
+                  </div>
+                </div>
+                <div class="col-4">
                   <form
                     action="/uploadProfilePhoto"
                     method="POST"
@@ -100,7 +106,9 @@
       <div class="row main-wrapper">
         <div class="col-2 offset-2">
           <div>
-            <button class="sittings-wrapper" type="submit">Friends</button>
+            <button class="sittings-wrapper" id="friends-btn" type="submit">
+              Friends
+            </button>
           </div>
         </div>
         <div class="col-2">
@@ -129,10 +137,13 @@
           <form id="changeForm" class="changeForm close">
             <h1>Change Information</h1>
             <div class="change-input-wrapper">
-              <input type="text" name="name" id="nameInput" />
-              <input type="text" name="surname" id="surnameInput" />
-              <input type="text" name="age" id="ageInput" />
               <small id="inform-about-changes"></small>
+              <input type="text" name="name" id="nameInput" />
+              <small id="nameError"></small>
+              <input type="text" name="surname" id="surnameInput" />
+              <small id="surnameError"></small>
+              <input type="text" name="age" id="ageInput" />
+              <small id="ageError" style="text-align: center;"></small> <br />
               <button id="saveChanges">Save</button>
             </div>
           </form>
@@ -158,6 +169,10 @@
               </button>
             </form>
             <ul class="photos-list-group"></ul>
+          </div>
+
+          <div class="friend-wrapper">
+            <ul class="friends-list-group"></ul>
           </div>
         </div>
       </div>

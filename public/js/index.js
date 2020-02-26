@@ -1,11 +1,11 @@
 const searchInput = document.getElementById('search-input');
 const searchButton = document.getElementById('search-btn');
 const listWrapper = document.getElementById('list-wrapper');
+const friendRequestList = document.getElementById('friendRequestList');
 
 //Searching users
 searchButton.addEventListener('click', async e => {
   listWrapper.innerHTML = '';
-
   e.preventDefault();
   let value = searchInput.value;
   let findedUsers;
@@ -28,12 +28,23 @@ searchButton.addEventListener('click', async e => {
         btn.classList.add('btn-sm');
         btn.innerHTML = 'Send request';
         li.append(btn);
+        //Sending friend requests
+        btn.addEventListener('click', l => {
+          l.preventDefault();
+          axios({
+            method: 'post',
+            url: '/sendRequest',
+            data: { user_two_id: e.ID }
+          });
+        });
       });
     })
     .catch(e => console.log(e));
 });
 document.querySelector('.container').addEventListener('click', () => {
   listWrapper.innerHTML = '';
+  friendRequestList.classList.remove('friendRequestList');
+  friendRequestList.innerHTML = null;
 });
 
 //get photos
@@ -42,6 +53,7 @@ const photosListGroup = document.querySelector('.photos-list-group');
 const photosWrapper = document.querySelector('.photos-wrapper');
 photosBtn.addEventListener('click', e => {
   changeForm.classList.add('close');
+  friendsWrapper.classList.add('close');
   photosWrapper.classList.remove('close');
   e.preventDefault();
   const config = {
@@ -111,12 +123,6 @@ photosBtn.addEventListener('click', e => {
           });
           li.append(selectBtn);
         });
-        // console.log(document.querySelectorAll('.reg-image'));
-        // document.querySelectorAll('.reg-image').forEach(img => {
-        //   img.addEventListener('click', () => {
-        //     img.style.width = '400px';
-        //   });
-        // });
       })
       .catch(e => console.log(e));
   }
@@ -132,6 +138,7 @@ const ageInput = document.getElementById('ageInput');
 sittingsBtn.addEventListener('click', async e => {
   e.preventDefault();
   photosWrapper.classList.add('close');
+  friendsWrapper.classList.add('close');
   let userInform;
   changeForm.classList.contains('close')
     ? changeForm.classList.remove('close')
@@ -157,19 +164,125 @@ saveChangesbtn.addEventListener('click', e => {
   e.preventDefault();
   const name = nameInput.value;
   const surname = surnameInput.value;
-  const age = Number.parseInt(ageInput.value);
-  const user = { name, surname, age };
+  const age = parseInt(ageInput.value);
+  const nameError = document.getElementById('nameError');
+  const surnameError = document.getElementById('surnameError');
+  const ageError = document.getElementById('ageError');
+  const errors = validationBeforeSave(name, surname, age);
+  if (Object.keys(errors).length === 0) {
+    const user = { name, surname, age };
+    nameError.innerHTML = '';
+    surnameError.innerHTML = '';
+    ageError.innerHTML = '';
+    axios({
+      method: 'post',
+      url: '/saveChanges',
+      data: { user }
+    }).then(res => {
+      document.querySelector('.name-text-wrapper').children[0].innerHTML = name;
+      document.querySelector(
+        '.name-text-wrapper'
+      ).children[1].innerHTML = surname;
+      informAboutChanges.innerHTML = res.data;
+    });
+  } else {
+    informAboutChanges.innerHTML = '';
+    if (errors.name) {
+      nameError.innerHTML = errors.name;
+    }
+    if (errors.surname) {
+      surnameError.innerHTML = errors.surname;
+    }
+    if (errors.age) {
+      ageError.innerHTML = errors.age;
+    }
+  }
+});
+
+//inform change input fields validation
+function validationBeforeSave(name, surname, age) {
+  let errors = {};
+  if (name === '') {
+    errors.name = `Name can't be empty string`;
+  }
+  if (surname === '') {
+    errors.surname = `Surname can't be empty string`;
+  }
+  if (Number.isNaN(age)) {
+    errors.age = 'Age must be numeric';
+  }
+  return errors;
+}
+
+//get Notifications about friend requests
+const notiсeBtn = document.getElementById('notificationBtn');
+
+notiсeBtn.addEventListener('click', e => {
+  friendRequestList.classList.remove('close');
+  e.preventDefault();
+  friendRequestList.innerHTML = '';
   axios({
     method: 'post',
-    url: '/saveChanges',
-    data: { user }
+    url: '/checkFriendRequests'
   }).then(res => {
-    document.querySelector('.name-text-wrapper').children[0].innerHTML = name;
-    document.querySelector(
-      '.name-text-wrapper'
-    ).children[1].innerHTML = surname;
-    informAboutChanges.innerHTML = res.data;
+    if (res.data.friendRequestsInform.length) {
+      res.data.friendRequestsInform.forEach(e => {
+        const li = document.createElement('li');
+        li.classList.add('friendRequestList-item');
+        friendRequestList.append(li);
+        friendRequestList.classList.add('friendRequestList');
+        const b = document.createElement('b');
+        li.append(b);
+        b.innerHTML = e.name + ' ' + e.surname;
+        b.style.cursor = 'pointer';
+        b.classList.add('name');
+        const btnsWrapper = document.createElement('div');
+        li.append(btnsWrapper);
+        const acceptBtn = document.createElement('button');
+        acceptBtn.classList.add('not-btn');
+        acceptBtn.classList.add('green');
+        acceptBtn.innerHTML = 'ACCEPT';
+        const deslineBtn = document.createElement('button');
+        deslineBtn.classList.add('not-btn');
+        deslineBtn.innerHTML = 'DESLINE';
+        btnsWrapper.append(deslineBtn);
+        btnsWrapper.append(acceptBtn);
+        btnsWrapper.style.display = 'flex';
+        const hr = document.createElement('hr');
+        friendRequestList.append(hr);
+        acceptBtn.addEventListener('click', k => {
+          k.preventDefault();
+          axios({
+            method: 'post',
+            url: '/acceptFriendRequest',
+            data: { userId: e.ID }
+          });
+        });
+        deslineBtn.addEventListener('click', k => {
+          k.preventDefault();
+          axios({
+            method: 'post',
+            url: '/deslineFriendRequest',
+            data: { userId: e.ID }
+          });
+        });
+      });
+    }
   });
+});
+
+//Get friends list
+const friendsBtn = document.getElementById('friends-btn');
+const friendsWrapper = document.querySelector('.friend-wrapper');
+const friendsListLroup = document.querySelector('.friends-list-group');
+friendsBtn.addEventListener('click', e => {
+  photosWrapper.classList.add('close');
+  changeForm.classList.add('close');
+  friendsWrapper.classList.remove('close');
+  axios({
+    method: 'post',
+    url: '/getFriendList'
+  }).then(res => console.log(res));
 });
 
 // const messageForm = document.getElementById('send-container')
