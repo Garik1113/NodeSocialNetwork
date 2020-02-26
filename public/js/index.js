@@ -4,7 +4,7 @@ const listWrapper = document.getElementById('list-wrapper');
 const friendRequestList = document.getElementById('friendRequestList');
 
 //Searching users
-searchButton.addEventListener('click', async e => {
+document.getElementById('search-input').addEventListener("input", async e => {
   listWrapper.innerHTML = '';
   e.preventDefault();
   let value = searchInput.value;
@@ -16,6 +16,7 @@ searchButton.addEventListener('click', async e => {
     data: { value }
   })
     .then(res => {
+      console.log(res)
       findedUsers = res.data.findedUsers;
       findedUsers.forEach(e => {
         let li = document.createElement('li');
@@ -46,6 +47,7 @@ document.querySelector('.container').addEventListener('click', () => {
   friendRequestList.classList.remove('friendRequestList');
   friendRequestList.innerHTML = null;
 });
+
 
 //get photos
 const photosBtn = document.getElementById('photos-btn');
@@ -216,7 +218,6 @@ function validationBeforeSave(name, surname, age) {
 
 //get Notifications about friend requests
 const notiсeBtn = document.getElementById('notificationBtn');
-
 notiсeBtn.addEventListener('click', e => {
   friendRequestList.classList.remove('close');
   e.preventDefault();
