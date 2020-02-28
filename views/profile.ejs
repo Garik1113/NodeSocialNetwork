@@ -20,6 +20,7 @@
                   type="text"
                   placeholder="Search"
                   id="search-input"
+                  autocomplete="off"
                 />
                 <button
                   class="btn btn-outline-success my-2 my-sm-0"
@@ -106,7 +107,7 @@
       <div class="row main-wrapper">
         <div class="col-2 offset-2">
           <div>
-            <button class="sittings-wrapper" id="friends-btn" type="submit">
+            <button class="sittings-wrapper" id="friends-btn" type="button">
               Friends
             </button>
           </div>
@@ -132,50 +133,36 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-12">
-          <form id="changeForm" class="changeForm close">
-            <h1>Change Information</h1>
-            <div class="change-input-wrapper">
-              <small id="inform-about-changes"></small>
-              <input type="text" name="name" id="nameInput" />
-              <small id="nameError"></small>
-              <input type="text" name="surname" id="surnameInput" />
-              <small id="surnameError"></small>
-              <input type="text" name="age" id="ageInput" />
-              <small id="ageError" style="text-align: center;"></small> <br />
-              <button id="saveChanges">Save</button>
-            </div>
-          </form>
-          <div class="photos-wrapper close">
-            <form
-              action="/uploadPhoto"
-              method="POST"
-              enctype="multipart/form-data"
-            >
-              <input
-                type="file"
-                name="image"
-                id="file"
-                class="upload-Photo-inputfile"
-              />
-              <label for="file">Upload photo</label>
-              <button
-                type="submit"
-                class="upload-photo-btn"
-                id="uploadPhotoBtn"
-              >
-                Add
-              </button>
-            </form>
-            <ul class="photos-list-group"></ul>
-          </div>
-
-          <div class="friend-wrapper">
-            <ul class="friends-list-group"></ul>
-          </div>
+      <form id="changeForm" class="changeForm close">
+        <h1>Change Information</h1>
+        <div class="change-input-wrapper">
+          <small id="inform-about-changes"></small>
+          <input type="text" name="name" id="nameInput" />
+          <small id="nameError"></small>
+          <input type="text" name="surname" id="surnameInput" />
+          <small id="surnameError"></small>
+          <input type="text" name="age" id="ageInput" />
+          <small id="ageError" style="text-align: center;"></small> <br />
+          <button id="saveChanges">Save</button>
         </div>
+      </form>
+
+      <div class="images-wrapper close">
+        <form action="/uploadPhoto" method="POST" enctype="multipart/form-data">
+          <input
+            type="file"
+            name="image"
+            id="file"
+            class="upload-Photo-inputfile"
+          />
+          <label for="file">Upload photo</label>
+          <button type="submit" class="upload-photo-btn" id="uploadPhotoBtn">
+            Add
+          </button>
+        </form>
+        <ul class="photos-list-group"></ul>
       </div>
+      <div class="friends-page-wrapper"></div>
     </div>
 
     <%- include('./partials/footer') %>

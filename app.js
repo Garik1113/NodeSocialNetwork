@@ -6,10 +6,6 @@ const {
   loginValidationRules,
   loginValidate
 } = require('./validators/loginValidator');
-const {
-  profileValidationRules,
-  validateProfile
-} = require('./validators/profileValidator');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -30,8 +26,8 @@ app.get('/', Controller.getHomePage);
 app.get('/signup', Controller.getSignupPage);
 app.get('/login', Controller.getLoginPage);
 app.get('/profile', Controller.getProfilePage);
+app.get('/getFriendPage', Controller.getFriendPage);
 app.get('*', Controller.getInvalidPage);
-
 app.post('/uploadProfilePhoto', Controller.uploadProfilePhoto);
 app.post(
   '/createUser',
@@ -45,17 +41,20 @@ app.post(
   loginValidate,
   Controller.tryLogin
 );
-app.post('/SearchUser', Controller.searchUser);
+
 app.post('/photos', Controller.getPhotosPage);
 app.post('/getUserInform', Controller.getUserInform);
 app.post('/saveChanges', Controller.saveChanges);
 app.post('/uploadPhoto', Controller.uploadNewPhoto);
 app.post('/deleteImage', Controller.deleteImage);
 app.post('/SetAsProfilePic', Controller.selectProfileImage);
+app.post('/SearchUser', Controller.searchUser);
 app.post('/sendRequest', Controller.sendRequest);
 app.post('/checkFriendRequests', Controller.checkFriendRequests);
 app.post('/acceptFriendRequest', Controller.acceptFriendRequest);
 app.post('/deslineFriendRequest', Controller.deslineFriendRequest);
 app.post('/getFriendList', Controller.getFriendList);
+app.post('/removeFriend', Controller.removeFriend);
+app.post('/postFriendPage', Controller.postFriendPage);
 
 app.listen(PORT);
