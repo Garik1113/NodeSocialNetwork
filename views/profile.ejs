@@ -22,13 +22,6 @@
                   id="search-input"
                   autocomplete="off"
                 />
-                <button
-                  class="btn btn-outline-success my-2 my-sm-0"
-                  type="submit"
-                  id="search-btn"
-                >
-                  Search
-                </button>
               </form>
             </div>
           </nav>
@@ -63,13 +56,18 @@
                     </a>
                   </div>
                 </div>
-                <div class="col-5">
-                  <div class="notifications-wrapper text-center">
-                    <button id="notificationBtn">Notifications</button>
+                <div class="col-5 offset-2">
+                  <div class="notifications-wrapper">
+                    <button class="message-notes" id="messagesBtn">
+                      Messages
+                    </button>
+                    <button class="message-notes" id="notificationBtn">
+                      Notifications
+                    </button>
                     <ul id="friendRequestList"></ul>
                   </div>
                 </div>
-                <div class="col-4">
+                <div class="col-4 offset-4">
                   <form
                     action="/uploadProfilePhoto"
                     method="POST"
@@ -99,6 +97,18 @@
                   </form>
                 </div>
               </div>
+              <div class="row">
+                <div class="col-12">
+                  <form class="status-form">
+                    <input
+                      type="text"
+                      placeholder="Share status"
+                      class="status-input"
+                    />
+                    <button class="btn btn-primary status-btn">Share</button>
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -107,14 +117,16 @@
       <div class="row main-wrapper">
         <div class="col-2 offset-2">
           <div>
-            <button class="sittings-wrapper" id="friends-btn" type="button">
+            <button class="sittings-wrapper" id="friends-btn" type="submit">
               Friends
             </button>
           </div>
         </div>
         <div class="col-2">
           <div>
-            <button class="sittings-wrapper" type="submit">Messages</button>
+            <button class="sittings-wrapper" type="submit" id="news-btn">
+              News
+            </button>
           </div>
         </div>
         <div class="col-2">
@@ -133,6 +145,7 @@
         </div>
       </div>
 
+      <div class="status-wrapper"></div>
       <form id="changeForm" class="changeForm close">
         <h1>Change Information</h1>
         <div class="change-input-wrapper">

@@ -26,7 +26,7 @@ app.get('/', Controller.getHomePage);
 app.get('/signup', Controller.getSignupPage);
 app.get('/login', Controller.getLoginPage);
 app.get('/profile', Controller.getProfilePage);
-app.get('/getFriendPage', Controller.getFriendPage);
+app.get('/getFriendPage/:name/:surname/:friendId', Controller.getFriendPage);
 app.get('*', Controller.getInvalidPage);
 app.post('/uploadProfilePhoto', Controller.uploadProfilePhoto);
 app.post(
@@ -55,6 +55,8 @@ app.post('/acceptFriendRequest', Controller.acceptFriendRequest);
 app.post('/deslineFriendRequest', Controller.deslineFriendRequest);
 app.post('/getFriendList', Controller.getFriendList);
 app.post('/removeFriend', Controller.removeFriend);
-app.post('/postFriendPage', Controller.postFriendPage);
-
+app.post('/shareStatus', Controller.shareStatus);
+app.post('/getFriendStatus', Controller.getFriendStatus);
+app.post('/addComment', Controller.addComment);
+app.post('/getComents', Controller.getComments);
 app.listen(PORT);

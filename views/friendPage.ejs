@@ -2,8 +2,45 @@
   <%- include('./partials/head') %>
 
   <body>
-    <h1>Friend page</h1>
-    <h2><% friend ? friend : '' %></h2>
+    <nav class="navbar navbar-light bg-yellow">
+      <a href="/profile" class="log-out">Home</a>
+      <a href="/login" class="log-out">Log Out</a>
+    </nav>
+    <div class="conatiner">
+      <div class="row">
+        <div class="col-8 offset-2">
+          <div class="jumbotron mt-3">
+            <div class="profile-wrapper">
+              <div class="row ">
+                <div class="col-3">
+                  <div class="profilePhoto-wrapper">
+                    <img
+                      src="<%= friend? friend.profile_image : '' %>"
+                      class="profile-image"
+                      alt=""
+                    />
+                  </div>
+                  <div class="name-wrapper d-flex align-items-center">
+                    <a
+                      href="/getFriendPage/<%= friend.name %>/<%= friend.surname %>/<%= friend.ID %>"
+                      class="d-flex name-text-wrapper"
+                    >
+                      <h3 style="margin: 10px;">
+                        <%= friend? friend.name : '' %>
+                      </h3>
+                      <h3 style="margin: 10px;">
+                        <%= friend? friend.surname : '' %>
+                      </h3>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <%- include('./partials/footer') %>
   </body>
 </html>

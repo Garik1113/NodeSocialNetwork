@@ -4,17 +4,8 @@ const listWrapper = document.getElementById('list-wrapper');
 const friendRequestList = document.getElementById('friendRequestList');
 const friendsPageWrapper = document.querySelector('.friends-page-wrapper');
 const notiсeBtn = document.getElementById('notificationBtn');
-window.onload = () => {
-  axios({
-    method: 'post',
-    url: '/checkFriendRequests'
-  }).then(res => {
-    let num = res.data.friendRequestsInform.length;
-    if (num > 0) {
-      notiсeBtn.innerHTML = num + ' ' + 'Notifications';
-    }
-  });
-};
+const statusWrapper = document.querySelector('.status-wrapper');
+
 //Searching users
 
 searchInput.addEventListener('input', async e => {
@@ -104,6 +95,8 @@ const imagesWrapper = document.querySelector('.images-wrapper');
 photosBtn.addEventListener('click', e => {
   changeForm.classList.add('close');
   friendsPageWrapper.innerHTML = '';
+  statusWrapper.innerHTML = '';
+  statusWrapper.classList.add('close');
   imagesWrapper.classList.remove('close');
   e.preventDefault();
   const config = {
@@ -187,12 +180,13 @@ const ageInput = document.getElementById('ageInput');
 
 sittingsBtn.addEventListener('click', async e => {
   e.preventDefault();
+  changeForm.classList.remove('close');
   imagesWrapper.classList.add('close');
   friendsPageWrapper.innerHTML = '';
+  statusWrapper.innerHTML = '';
+  statusWrapper.classList.add('close');
   let userInform;
-  changeForm.classList.contains('close')
-    ? changeForm.classList.remove('close')
-    : changeForm.classList.add('close');
+
   await axios({
     method: 'post',
     url: '/getUserInform'
@@ -352,6 +346,8 @@ friendsBtn.addEventListener('click', e => {
   friendsPageWrapper.innerHTML = '';
   imagesWrapper.classList.add('close');
   changeForm.classList.add('close');
+  statusWrapper.classList.add('close');
+  statusWrapper.innerHTML = '';
   axios({
     method: 'post',
     url: '/getFriendList'
@@ -369,20 +365,12 @@ friendsBtn.addEventListener('click', e => {
       div.append(form);
       form.method = 'POST';
       form.action = '/postFriendPage';
-      const button = document.createElement('button');
-      button.classList.add('friend-name');
-      form.append(button);
-      button.innerHTML = k.name + ' ' + k.surname;
-      button.style.color = '#000000';
-      button.name = k.ID;
-      button.type = 'submit';
-      // a.addEventListener('click', () => {
-      //   axios({
-      //     method: 'post',
-      //     url: '/postFriendPage',
-      //     data: { userId: k.ID }
-      //   });
-      // });
+      const a = document.createElement('a');
+      a.classList.add('friend-name');
+      form.append(a);
+      a.innerHTML = k.name + ' ' + k.surname;
+      a.style.color = '#000000';
+      a.href = `/getFriendPage/${k.name}/${k.surname}/${k.ID}`;
       const removeBtn = document.createElement('button');
       removeBtn.innerHTML = 'Remove Friend';
       removeBtn.classList.add('btn');
@@ -400,6 +388,178 @@ friendsBtn.addEventListener('click', e => {
     });
   });
 });
+
+// Share status
+const statusInput = document.querySelector('.status-input');
+const statusBtn = document.querySelector('.status-btn');
+
+statusBtn.addEventListener('click', e => {
+  e.preventDefault();
+  axios({
+    method: 'post',
+    url: '/shareStatus',
+    data: { status: statusInput.value }
+  });
+  statusInput.value = '';
+});
+
+//See notifications and statuss when window is loaded
+const newsBtn = document.getElementById('news-btn');
+const commentListWrapper = document.querySelector('.comment-list-wrapper');
+newsBtn.addEventListener('click', getFriendStatuss);
+window.onload = () => {
+  statusWrapper.innerHTML = '';
+  axios({
+    method: 'post',
+    url: '/checkFriendRequests'
+  }).then(res => {
+    let num = res.data.friendRequestsInform.length;
+    if (num > 0) {
+      notiсeBtn.innerHTML = num + ' ' + 'Notifications';
+    }
+  });
+  getFriendStatuss();
+};
+
+function getFriendStatuss() {
+  statusWrapper.innerHTML = '';
+  friendsPageWrapper.innerHTML = '';
+  imagesWrapper.classList.add('close');
+  changeForm.classList.add('close');
+  statusWrapper.classList.remove('close');
+  statusWrapper.innerHTML = '';
+  axios({
+    method: 'post',
+    url: '/getFriendStatus'
+  }).then(res => {
+    const statuses = res.data.friendStatuss;
+    statuses.forEach(s => {
+      const div = document.createElement('div');
+      div.classList.add('alert');
+      div.classList.add('alert-info');
+      statusWrapper.append(div);
+      const h3 = document.createElement('h3');
+      div.append(h3);
+      h3.innerHTML = s.status;
+      h3.style.cursor = 'pointer';
+      const a = document.createElement('a');
+      div.append(a);
+      a.innerHTML = s.name + ' ' + s.surname;
+      a.href = `/getFriendPage/${s.name}/${s.surname}/${s.ID}`;
+      const ul = document.createElement('ul');
+      ul.classList.add('list-group');
+      div.append(ul);
+      const input = document.createElement('input');
+      div.append(input);
+      const commentBtn = document.createElement('button');
+      commentBtn.innerHTML = 'ADD';
+      div.append(commentBtn);
+      commentBtn.addEventListener('click', e => {
+        axios({
+          method: 'post',
+          url: '/addComment',
+          data: {
+            comment: input.value,
+            status_id: s.status_id
+          }
+        });
+        input.value = '';
+      });
+      h3.addEventListener('click', e => {
+        ul.innerHTML
+          ? (ul.innerHTML = '')
+          : axios({
+              method: 'post',
+              url: '/getComents',
+              data: { status_id: s.status_id }
+            }).then(res => {
+              const comments = res.data.comments;
+              comments.forEach(c => {
+                const li = document.createElement('li');
+                li.classList.add('list-group-item');
+                ul.append(li);
+                const h4 = document.createElement('h4');
+                li.append(h4);
+                h4.innerHTML = c.name + ' ' + c.surname;
+                const p = document.createElement('p');
+                li.append(p);
+                p.innerHTML = c.comment;
+              });
+            });
+      });
+    });
+  });
+}
+
+// function getFriendStatuss() {
+//   imagesWrapper.classList.add('close');
+//   statusWrapper.innerHTML = '';
+//   statusWrapper.classList.remove('close');
+//   changeForm.classList.add('close');
+//   friendsPageWrapper.innerHTML = '';
+//   commentListWrapper.innerHTML = '';
+//   axios({
+//     method: 'post',
+//     url: '/getFriendStatus'
+//   }).then(res => {
+//     const statuss = res.data.friendStatuss.filter(s => s !== null);
+//     if (statuss.length === 0) {
+//       const p = document.createElement('p');
+//       statusWrapper.append(p);
+//       p.innerHTML = 'No statuses yet';
+//     }
+//     statuss.forEach(e => {
+//       let friendStatus = e.status;
+//       let friendComments = e.comments;
+//       const div = document.createElement('div');
+//       div.classList.add('alert');
+//       div.classList.add('alert-info');
+//       div.classList.add('status-div');
+//       statusWrapper.append(div);
+//       div.innerHTML = friendStatus.status;
+//       const a = document.createElement('a');
+//       a.href = a.href = `/getFriendPage/${friendStatus.name}/${friendStatus.surname}/${friendStatus.ID}`;
+//       a.innerHTML = friendStatus.name + ' ' + friendStatus.surname;
+//       const ul = document.createElement('ul');
+//       div.append(ul);
+//       friendComments.forEach(c => {
+//         const li = document.createElement('li');
+//         ul.append(li);
+//         li.innerHTML = c.comment;
+//       });
+//       div.append(a);
+//       const form = document.createElement('form');
+//       div.append(form);
+//       const commentInput = document.createElement('input');
+//       form.append(commentInput);
+//       const comentBtn = document.createElement('button');
+//       form.append(comentBtn);
+//       comentBtn.classList.add('btn');
+//       comentBtn.classList.add('btn-sm');
+//       comentBtn.classList.add('btn-primary');
+//       comentBtn.innerHTML = 'Add';
+//       comentBtn.addEventListener('click', e => {
+//         e.preventDefault();
+//         axios({
+//           method: 'post',
+//           url: '/addComent',
+//           data: {
+//             comment: commentInput.value,
+//             status_id: friendStatus.status_id
+//           }
+//         });
+//         location.reload(true);
+//         commentInput.value = '';
+//       });
+//       const btn = document.createElement('button');
+//       btn.classList.add('btn');
+//       btn.classList.add('btn-sm');
+//       btn.classList.add('btn-primary');
+//       btn.innerHTML = 'Like';
+//       div.append(btn);
+//     });
+//   });
+// }
 
 // const messageForm = document.getElementById('send-container')
 // const messageContainer = document.getElementById('message-container')
@@ -425,17 +585,3 @@ friendsBtn.addEventListener('click', e => {
 //     messageElement.innerText = message
 //     messageContainer.append(messageElement)
 //   }
-
-// search
-
-//   searchButton.addEventListener('click', (e) => {
-//       console.log("E")
-//       e.preventDefault()
-//       const value = searchInput.value
-
-//       axios({
-//           method:'post',
-//           url: '/search',
-//           data: {value}
-//       })
-//   })

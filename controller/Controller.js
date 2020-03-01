@@ -446,10 +446,47 @@ class Controller {
   }
 
   async getFriendPage(req, res) {
-    const friend = await (function() {
+    const { name, surname, friendId } = req.params;
+    if (friendId == req.session.userId) {
+      return res.redirect('/profile');
+    }
+    if (req.session.userId) {
+      const friend = await (function() {
+        return new Promise((resolve, reject) => {
+          connection.query(
+            `SELECT * FROM users WHERE ID = '${friendId}'`,
+            (err, data) => {
+              if (err) throw err;
+              resolve(data);
+            }
+          );
+        });
+      })();
+
+      res.render('friendPage', { friend: friend[0] });
+    } else {
+      res.redirect('/*');
+    }
+  }
+
+  shareStatus(req, res) {
+    if (req.body.status) {
+      connection.query(
+        `INSERT INTO statuss(status, user_id) VALUES('${req.body.status}', '${req.session.userId}')`,
+        (err, data) => {
+          if (err) throw err;
+        }
+      );
+    }
+
+    res.end();
+  }
+
+  async getFriendStatus(req, res) {
+    const friends = await (function() {
       return new Promise((resolve, reject) => {
         connection.query(
-          `SELECT * FROM users WHERE ID = '${req.session.friendId}'`,
+          `SELECT * FROM relationships WHERE user_one_id = '${req.session.userId}' OR user_two_id = '${req.session.userId}'`,
           (err, data) => {
             if (err) throw err;
             resolve(data);
@@ -457,17 +494,86 @@ class Controller {
         );
       });
     })();
-    console.log(friend);
-    return res.render('friendPage', { friend: friend[0] });
+
+    let friendsID = [...new Set(friends.map(e => Object.values(e)).flat())];
+
+    if (!friendsID.length) {
+      return res.send({ friendStatuss: [] });
+    }
+    let friendStatuss = [];
+    friendsID.map(async (e, k) => {
+      const status = await (function() {
+        return new Promise((resolve, reject) => {
+          connection.query(
+            `SELECT * FROM statuss JOIN users ON users.ID = statuss.user_id WHERE user_id = '${e}'`,
+            (err, data) => {
+              if (err) reject(err);
+              resolve(data);
+            }
+          );
+        });
+      })();
+      status.forEach(l => friendStatuss.push(l));
+      if (k === friendsID.length - 1) {
+        res.send({ friendStatuss });
+      }
+    });
+
+    // console.log(friendStatuss);
+    // friendStatuss.push(statuses[0]);
+    // console.log(friendStatuss);
+    // async function get() {
+    //   await friendStatuss.push(statuses);
+    // }
+
+    //   return new Promise((resolve, reject) => {});
+    //   console.log(friendStatuss);
+    //   friendStatuss.push(status[0]);
+    //   if (status[0]) {
+    //     let status_id = status[0].status_id;
+    //     const comments = await (function() {
+    //       return new Promise((resolve, reject) => {
+    //         connection.query(
+    //           `SELECT * FROM comments JOIN users ON user_id = ID WHERE status_id = '${status_id}'`,
+    //           (err, data) => {
+    //             if (err) throw err;
+    //             resolve(data);
+    //           }
+    //         );
+    //       });
+    //     })();
+    //     friendStatuss.push({ status: status[0], comments });
+    //   } else {
+    //     friendStatuss.push(null);
+    //   }
+    //   if (friendStatuss.length === friendsID.length) {
+    //     res.send({ friendStatuss });
+    //   }
+    // });
+    // console.log(friendStatuss);
   }
 
-  postFriendPage(req, res) {
-    req.session.friendId = req.body.userId;
-    res.redirect('/getFriendPage');
-    // res.render('friendPage');
-    // res.redirect('/friendPage');
-
-    // connection.query();
+  async getComments(req, res) {
+    const comments = await (function() {
+      return new Promise((resolve, reject) => {
+        connection.query(
+          `SELECT * FROM comments JOIN users ON user_id = ID WHERE status_id = '${req.body.status_id}'`,
+          (err, data) => {
+            if (err) throw err;
+            resolve(data);
+          }
+        );
+      });
+    })();
+    res.send({ comments });
+  }
+  addComment(req, res) {
+    connection.query(
+      `INSERT INTO comments (user_id, status_id, comment) VALUES('${req.session.userId}','${req.body.status_id}','${req.body.comment}')`,
+      (err, data) => {
+        if (err) throw err;
+      }
+    );
   }
 }
 module.exports = new Controller();
