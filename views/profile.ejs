@@ -99,13 +99,15 @@
               </div>
               <div class="row">
                 <div class="col-12">
-                  <form class="status-form">
+                  <form class="status-form" enctype="multipart/form-data" method="POST" action="/shareStatus">
                     <input
                       type="text"
+                      name="status"
                       placeholder="Share status"
                       class="status-input"
                     />
-                    <button class="btn btn-primary status-btn">Share</button>
+                    <input type="file" name="statusImage">
+                    <button class="btn btn-primary status-btn" type="submit">Share</button>
                   </form>
                 </div>
               </div>

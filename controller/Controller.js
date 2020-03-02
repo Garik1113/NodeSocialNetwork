@@ -24,9 +24,19 @@ const storageForImages = multer.diskStorage({
     );
   }
 });
+const storageForStatuses = multer.diskStorage({
+  destination: 'public/uploads/statusImages',
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname + '-' + Date.now() + path.extname(file.originalname)
+    );
+  }
+});
 
 const upload = multer({ storage: storage }).single('profilePhoto');
 const uploadImage = multer({ storage: storageForImages }).single('image');
+const uploadStatusImage = multer({ storage: storageForStatuses }).single('statusImage');
 
 class Controller {
   getHomePage(req, res) {
@@ -113,7 +123,6 @@ class Controller {
 
     return res.end();
   }
-
   async searchUser(req, res) {
     const name = req.body.value;
     if (name) {
@@ -121,7 +130,7 @@ class Controller {
       const searchingUsers = await (function() {
         return new Promise((resolve, reject) => {
           connection.query(
-            `SELECT * FROM users WHERE(name LIKE '${name}%' or surname LIKE '${name}%') AND ID != ${req.session.userId} LIMIT 5 `,
+            `SELECT * FROM users WHERE(name LIKE '${name}%' or surname LIKE '${name}%') AND ID != ${req.session.userId} LIMIT 0,5 `,
             (err, data) => {
               if (err) throw err;
               resolve(data);
@@ -470,16 +479,25 @@ class Controller {
   }
 
   shareStatus(req, res) {
-    if (req.body.status) {
-      connection.query(
-        `INSERT INTO statuss(status, user_id) VALUES('${req.body.status}', '${req.session.userId}')`,
-        (err, data) => {
-          if (err) throw err;
-        }
-      );
-    }
+    uploadStatusImage(req, res, err => {
+      if (err) throw err;
+      if(req.file || res.body.status){
+        connection.query(
+         `INSERT INTO statuss(status, user_id, image) VALUES('${req.body.status}', '${req.session.userId}', '/uploads/statusImages/${req.file.filename}')`,
+            (err, data) => {
+         if (err) throw err;
+         }
+       );
+       res.redirect('/profile')
+      }
+    });
 
-    res.end();
+  // res.redirect('/profile');
+    // if (req.body.status) {
+    //   
+    // }
+
+   
   }
 
   async getFriendStatus(req, res) {

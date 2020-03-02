@@ -394,13 +394,12 @@ const statusInput = document.querySelector('.status-input');
 const statusBtn = document.querySelector('.status-btn');
 
 statusBtn.addEventListener('click', e => {
-  e.preventDefault();
-  axios({
-    method: 'post',
-    url: '/shareStatus',
-    data: { status: statusInput.value }
-  });
-  statusInput.value = '';
+  // e.preventDefault();
+  // axios({
+  //   method: 'post',
+  //   url: '/shareStatus',
+  //   data: { status: statusInput.value }
+  // });
 });
 
 //See notifications and statuss when window is loaded
