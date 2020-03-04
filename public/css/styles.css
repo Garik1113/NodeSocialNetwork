@@ -180,15 +180,6 @@ small {
   cursor: pointer;
 }
 
-.getFullImage {
-  width: 700px;
-  height: 500px;
-  position: absolute;
-  top: 10px;
-  left: 200px;
-  z-index: 150;
-  box-shadow: 20px 20px 20px 10px;
-}
 .upload-Photo-inputfile {
   width: 0.1px;
   height: 0.1px;
@@ -309,6 +300,7 @@ footer {
 /* footer page end */
 
 /* Notifications */
+
 .notifications-wrapper {
   /* width: 100%;
   background: #ffffff;
@@ -393,6 +385,14 @@ footer {
   box-shadow: 1px 10px 15px 1px;
 }
 
+.friend-link {
+  font-size: 18px;
+  color: #ffffff;
+}
+.friend-link:hover {
+  text-decoration: none;
+  color: #ffffff;
+}
 .friend {
   height: 220px;
   width: 200px;
@@ -421,42 +421,263 @@ footer {
 /* Friends content End*/
 
 /* Status Content */
-.status-wrapper {
-  width: auto;
-  padding: 3rem;
-  margin: 0;
-  background: #ffffff;
-  box-shadow: 1px 10px 15px 1px;
-}
-.status-form {
+
+/* Share new status */
+.share-status-form {
   display: flex;
   align-items: center;
-}
-.status-div {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
 }
 
-.status-input {
+.share-status-input {
   width: 100%;
   height: 55px;
   border-radius: 5px;
-  border: 2px solid grey;
+  border: 2px solid rgb(130, 224, 22);
   text-align: 16px;
   color: #0de278;
   padding-left: 5px;
 }
-.status-btn {
+.share-status-btn {
   width: 100px;
   height: 55px;
-  background: #e2d40a;
+  background: #0de278;
   border: none;
+  border-radius: 5px;
   margin-left: 2px;
+  color: #ffffff;
 }
-.status-btn:hover {
-  background: #e2d40a;
-  color: #000000;
+.share-status-btn:hover {
+  background: #36b877;
+  color: #ffffff;
+}
+
+.upload-image-wrapper .share-input-file {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+.upload-image-wrapper .share-input-file + .js-labelFile {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 55px;
+  line-height: 40px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+/* Share new status END*/
+
+.status-wrapper {
+  width: auto;
+  padding: 3rem;
+  margin: 100px auto;
+  background: #ffffff;
+  box-shadow: 1px 10px 15px 1px;
+  text-align: center;
+}
+
+.status-div {
+  text-align: center;
+}
+
+.status-writer {
+  font-size: 21px;
+  color: #0c6ba1;
+  font-weight: 600;
+}
+
+.status-writer:hover {
+  text-decoration: none;
+  color: #0c6ba1;
+}
+
+.status-text {
+  font-size: 17px;
+  color: #073f6d;
+  cursor: pointer;
+}
+
+.status-image {
+  max-width: 500px;
+  max-height: 500px;
+  margin-bottom: 30px;
+}
+.comment-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.comment-list-group {
+  text-align: center;
+}
+.comment-list-item {
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  margin: 0.5rem auto;
+  background: #05c8eb;
+  border-radius: 5px;
+}
+.comment-writer {
+  color: #073f6d;
+  font-size: 18px;
+}
+.comment-write:hover {
+  text-decoration: none;
+  color: #073f6d;
+}
+.comment-text {
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.comment-input {
+  width: 300px;
+  padding: 0.5rem;
+  border-radius: 5px;
+  color: #0c6ba1;
+}
+
+.comment-btn {
+  width: 100px;
+  padding: 0.5rem;
+  background: #36b877;
+  border: none;
+  border-radius: 5px;
+  margin-left: 3px;
+  color: #ffffff;
+}
+.comment-btn:hover {
+  background: #0f663a;
 }
 
 /* Status Content END*/
+
+/* Buttons */
+
+.btn-small-success {
+  font-size: 16px;
+  font-weight: normal;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  padding: 0.5rem;
+  background: #0de278;
+}
+.btn-small-success:hover {
+  background: #36b877;
+}
+
+.btn-small-warning {
+  font-size: 16px;
+  font-weight: normal;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  padding: 0.5rem;
+  background: #e20d42;
+}
+.btn-small-warning:hover {
+  background: #da2f5a;
+}
+
+/* Buttons END*/
+
+/* Modal image styles */
+
+.modal-image {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.9); /* Black w/ opacity */
+}
+
+.modal-content {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+}
+
+.closeSpan {
+  cursor: pointer;
+  right: 35px;
+  color: #f5efef;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* 100% Image Width on Smaller Screens */
+@media only screen and (max-width: 700px) {
+  .modal-content {
+    width: 100%;
+  }
+}
+
+/* Modal image styles END*/
+
+/* messages content */
+.message-friends-list-item {
+  list-style-type: none;
+  padding: 1rem;
+  color: #ffffff;
+  font-size: 18px;
+  background: #0de278;
+  text-align: center;
+  border-radius: 5px;
+  margin: 0.5rem;
+}
+
+.messages-right-content {
+  width: 100%;
+  height: 700px;
+  border: 3px solid #0de278;
+}
+
+.send-message-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 50px;
+  left: 200px;
+  margin-top: 100px;
+}
+.sendMessageText {
+  width: 300px;
+  padding: 0.5rem;
+  color: #000000;
+  border-radius: 3px;
+}
+.sendMessageBtn {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 3px;
+  background: #0de278;
+}
+/* messages content END*/

@@ -5,6 +5,7 @@ const friendRequestList = document.getElementById('friendRequestList');
 const friendsPageWrapper = document.querySelector('.friends-page-wrapper');
 const notiсeBtn = document.getElementById('notificationBtn');
 const statusWrapper = document.querySelector('.status-wrapper');
+const messageWrapper = document.querySelector('.message-wrapper');
 
 //Searching users
 
@@ -20,62 +21,116 @@ searchInput.addEventListener('input', async e => {
   })
     .then(res => {
       findedUsers = res.data.findedUsers;
+
       findedUsers.forEach(e => {
+        // console.log(e.status);
         let li = document.createElement('li');
+        const aFriendLink = document.createElement('a');
+        aFriendLink.innerHTML = e.name + ' ' + e.surname;
+        aFriendLink.classList.add('friend-link');
+        aFriendLink.href = `/getFriendPage/${e.name}/${e.surname}/${e.ID}`;
         li.classList.add('finded-list-item');
-        li.innerHTML = e.name + ' ' + e.surname;
+        li.append(aFriendLink);
         listWrapper.append(li);
-        if (e.status === 'Has Sended request') {
-          let acceptBtn = document.createElement('button');
-          acceptBtn.classList.add('btn');
-          acceptBtn.classList.add('btn-primary');
-          acceptBtn.classList.add('btn-sm');
-          acceptBtn.innerHTML = 'Accept';
-          li.append(acceptBtn);
-          let deslineBtn = document.createElement('button');
 
-          deslineBtn.classList.add('btn');
-          deslineBtn.classList.add('btn-secondary');
-          deslineBtn.classList.add('btn-sm');
-          deslineBtn.innerHTML = 'Desline';
+        while (true) {
+          if (e.status === 'Has Sended request') {
+            let acceptBtn = document.createElement('button');
+            acceptBtn.classList.add('btn-small-success');
+            acceptBtn.innerHTML = 'Accept';
+            li.append(acceptBtn);
 
-          li.append(deslineBtn);
-          acceptBtn.addEventListener(
-            'click',
-            AcceptRequest.bind(this, e, deslineBtn, acceptBtn)
-          );
-          deslineBtn.addEventListener(
-            'click',
-            DeslineRequest.bind(this, e, acceptBtn, deslineBtn)
-          );
-        } else if (e.status === 'Request sended') {
-          const small = document.createElement('small');
-          small.innerHTML = 'Sended';
-          small.style.color = '#000000';
-          small.style.fontSize = '16px';
-          li.append(small);
-        } else if (e.status === 'Send request') {
-          const sendRequestBtn = document.createElement('button');
-          sendRequestBtn.classList.add('btn');
-          sendRequestBtn.classList.add('btn-primary');
-          sendRequestBtn.classList.add('btn-sm');
-          sendRequestBtn.innerHTML = 'Send request';
-          li.append(sendRequestBtn);
-          sendRequestBtn.addEventListener('click', l => {
-            sendRequestBtn.innerHTML = 'Sended';
-            sendRequestBtn.disabled = true;
-            l.preventDefault();
-            axios({
-              method: 'post',
-              url: '/sendRequest',
-              data: { user_two_id: e.ID }
+            let deslineBtn = document.createElement('button');
+            deslineBtn.classList.add('btn-small-warning');
+            deslineBtn.innerHTML = 'Desline';
+            li.append(deslineBtn);
+            acceptBtn.addEventListener('click', k => {
+              k.preventDefault();
+              axios({
+                method: 'post',
+                url: '/acceptFriendRequest',
+                data: { user_two_id: e.ID }
+              });
+              acceptBtn.remove();
+              deslineBtn.remove();
+              e.status = 'Friend';
             });
-          });
-        } else if (e.status === 'Friend') {
-          const small = document.createElement('small');
-          small.innerHTML = 'Friend';
-          small.style.color = '#000000';
-          li.append(small);
+            deslineBtn.addEventListener('click', k => {
+              k.preventDefault();
+              axios({
+                method: 'post',
+                url: '/deslineFriendRequest',
+                data: { user_two_id: e.ID }
+              });
+              deslineBtn.remove();
+              e.status = 'Send request';
+            });
+            return;
+          } else if (e.status === 'Request sended') {
+            const removeBtn = document.createElement('button');
+            removeBtn.innerHTML = 'Cancel';
+            removeBtn.classList.add('btn-small-warning');
+            li.append(removeBtn);
+            removeBtn.addEventListener('click', k => {
+              k.preventDefault();
+              axios({
+                method: 'post',
+                url: '/removeRequest',
+                data: { user_two_id: e.ID }
+              });
+              removeBtn.remove();
+              e.status = 'Send request';
+              return;
+            });
+            return;
+          }
+          if (e.status === 'Send request') {
+            const sendRequestBtn = document.createElement('button');
+            sendRequestBtn.classList.add('btn-small-success');
+            sendRequestBtn.innerHTML = 'Send request';
+            li.append(sendRequestBtn);
+            sendRequestBtn.addEventListener('click', l => {
+              sendRequestBtn.remove();
+              l.preventDefault();
+              axios({
+                method: 'post',
+                url: '/sendRequest',
+                data: { user_two_id: e.ID }
+              });
+              sendRequestBtn.remove();
+              const removeBtn = document.createElement('button');
+              removeBtn.innerHTML = 'Cancel';
+              removeBtn.classList.add('btn-small-warning');
+              li.append(removeBtn);
+              removeBtn.addEventListener('click', e => {
+                e.preventDefault();
+                axios({
+                  method: 'post',
+                  url: '/removeRequest',
+                  data: { user_two_id: e.ID }
+                });
+                removeBtn.remove();
+                e.status = 'Send request';
+              });
+            });
+            return;
+          } else if (e.status === 'Friend') {
+            const removeFriend = document.createElement('button');
+            removeFriend.classList.add('btn-small-warning');
+            removeFriend.innerHTML = 'Remove';
+            li.append(removeFriend);
+            removeFriend.addEventListener('click', k => {
+              k.preventDefault();
+              axios({
+                method: 'post',
+                url: '/removeFriend',
+                data: { userId: e.ID }
+              });
+              removeFriend.remove();
+              e.status = 'Send request';
+            });
+            return;
+          }
         }
       });
     })
@@ -97,6 +152,7 @@ photosBtn.addEventListener('click', e => {
   friendsPageWrapper.innerHTML = '';
   statusWrapper.innerHTML = '';
   statusWrapper.classList.add('close');
+  messageWrapper.classList.add('close');
   imagesWrapper.classList.remove('close');
   e.preventDefault();
   const config = {
@@ -115,13 +171,25 @@ photosBtn.addEventListener('click', e => {
           const small = document.createElement('small');
           li.append(small);
           small.classList.add('inform-about-updates');
+
           const img = document.createElement('img');
           img.setAttribute('src', e.image_path);
           img.classList.add('reg-image');
+          img.classList.contains;
           li.append(img);
-          img.addEventListener('click', e => {
-            e.target.classList.add('getFullImage');
-          });
+
+          const modal = document.getElementById('myModal');
+          const modalImg = document.getElementById('img01');
+          img.onclick = function() {
+            modal.style.display = 'block';
+            modalImg.src = this.src;
+          };
+
+          const closeSpan = document.querySelectorAll('.closeSpan')[0];
+          closeSpan.onclick = function() {
+            modal.style.display = 'none';
+          };
+
           const deleteBtn = document.createElement('button');
           deleteBtn.classList.add('btn');
           deleteBtn.classList.add('btn-danger');
@@ -182,6 +250,7 @@ sittingsBtn.addEventListener('click', async e => {
   e.preventDefault();
   changeForm.classList.remove('close');
   imagesWrapper.classList.add('close');
+  messageWrapper.classList.add('close');
   friendsPageWrapper.innerHTML = '';
   statusWrapper.innerHTML = '';
   statusWrapper.classList.add('close');
@@ -259,7 +328,6 @@ function validationBeforeSave(name, surname, age) {
 }
 
 //get Notifications about friend requests
-
 notiсeBtn.addEventListener('click', e => {
   friendRequestList.classList.remove('close');
   e.preventDefault();
@@ -267,77 +335,55 @@ notiсeBtn.addEventListener('click', e => {
   axios({
     method: 'post',
     url: '/checkFriendRequests'
-  }).then(res => {
-    if (res.data.friendRequestsInform.length) {
-      res.data.friendRequestsInform.forEach(e => {
-        const li = document.createElement('li');
-        li.classList.add('friendRequestList-item');
-        friendRequestList.append(li);
-        friendRequestList.classList.add('friendRequestList');
-        const b = document.createElement('b');
-        li.append(b);
-        b.innerHTML = e.name + ' ' + e.surname;
-        b.style.cursor = 'pointer';
-        b.classList.add('name');
-        const btnsWrapper = document.createElement('div');
-        li.append(btnsWrapper);
-        const acceptBtn = document.createElement('button');
-        acceptBtn.classList.add('not-btn');
-        acceptBtn.classList.add('green');
-        acceptBtn.innerHTML = 'ACCEPT';
-        const deslineBtn = document.createElement('button');
-        deslineBtn.classList.add('not-btn');
-        deslineBtn.innerHTML = 'DESLINE';
-        btnsWrapper.append(deslineBtn);
-        btnsWrapper.append(acceptBtn);
-        btnsWrapper.style.display = 'flex';
-        const hr = document.createElement('hr');
-        friendRequestList.append(hr);
+  })
+    .then(res => {
+      if (res.data.friendRequestsInform.length) {
+        res.data.friendRequestsInform.forEach(e => {
+          const li = document.createElement('li');
+          li.classList.add('friendRequestList-item');
+          friendRequestList.append(li);
+          friendRequestList.classList.add('friendRequestList');
+          const b = document.createElement('b');
+          li.append(b);
+          b.innerHTML = e.name + ' ' + e.surname;
+          b.style.cursor = 'pointer';
+          b.classList.add('name');
+          const btnsWrapper = document.createElement('div');
+          li.append(btnsWrapper);
+          const acceptBtn = document.createElement('button');
+          acceptBtn.classList.add('not-btn');
+          acceptBtn.classList.add('green');
+          acceptBtn.innerHTML = 'ACCEPT';
+          const deslineBtn = document.createElement('button');
+          deslineBtn.classList.add('not-btn');
+          deslineBtn.innerHTML = 'DESLINE';
+          btnsWrapper.append(deslineBtn);
+          btnsWrapper.append(acceptBtn);
+          btnsWrapper.style.display = 'flex';
+          const hr = document.createElement('hr');
+          friendRequestList.append(hr);
+          acceptBtn.addEventListener('click', k => {
+            k.preventDefault();
+            axios({
+              method: 'post',
+              url: '/acceptFriendRequest',
+              data: { user_two_id: e.ID }
+            });
+          });
 
-        acceptBtn.addEventListener(
-          'click',
-          AcceptRequest.bind(this, e, deslineBtn, acceptBtn)
-        );
-
-        deslineBtn.addEventListener(
-          'click',
-          DeslineRequest.bind(this, e, acceptBtn, deslineBtn)
-        );
-      });
-    }
-  });
+          deslineBtn.addEventListener('click', k => {
+            k.preventDefault();
+            axios({
+              method: 'post',
+              url: '/deslineFriendRequest',
+              data: { user_two_id: e.ID }
+            });
+          });
+        });
+      }
+    })
+    .catch(e => console.log(e));
 });
-
-//friend request functions
-function DeslineRequest(e, btn1, btn2) {
-  if (btn1) {
-    btn1.classList.add('close');
-  }
-  if (btn2) {
-    btn2.innerHTML = 'Deslined';
-    btn2.disabled = true;
-  }
-
-  axios({
-    method: 'post',
-    url: '/deslineFriendRequest',
-    data: { userId: e.ID }
-  });
-}
-function AcceptRequest(e, btn1, btn2) {
-  if (btn1) {
-    btn1.classList.add('close');
-  }
-  if (btn2) {
-    btn2.innerHTML = 'Accepted';
-    btn2.disabled = true;
-  }
-  axios({
-    method: 'post',
-    url: '/acceptFriendRequest',
-    data: { userId: e.ID }
-  });
-}
 
 //Get friends list
 const friendsBtn = document.getElementById('friends-btn');
@@ -346,6 +392,7 @@ friendsBtn.addEventListener('click', e => {
   friendsPageWrapper.innerHTML = '';
   imagesWrapper.classList.add('close');
   changeForm.classList.add('close');
+  messageWrapper.classList.add('close');
   statusWrapper.classList.add('close');
   statusWrapper.innerHTML = '';
   axios({
@@ -389,23 +436,10 @@ friendsBtn.addEventListener('click', e => {
   });
 });
 
-// Share status
-const statusInput = document.querySelector('.status-input');
-const statusBtn = document.querySelector('.status-btn');
-
-statusBtn.addEventListener('click', e => {
-  // e.preventDefault();
-  // axios({
-  //   method: 'post',
-  //   url: '/shareStatus',
-  //   data: { status: statusInput.value }
-  // });
-});
-
 //See notifications and statuss when window is loaded
 const newsBtn = document.getElementById('news-btn');
 const commentListWrapper = document.querySelector('.comment-list-wrapper');
-newsBtn.addEventListener('click', getFriendStatuss);
+newsBtn.addEventListener('click', getFriendStatuses);
 window.onload = () => {
   statusWrapper.innerHTML = '';
   axios({
@@ -417,43 +451,64 @@ window.onload = () => {
       notiсeBtn.innerHTML = num + ' ' + 'Notifications';
     }
   });
-  getFriendStatuss();
+  getFriendStatuses();
 };
 
-function getFriendStatuss() {
+function getFriendStatuses() {
   statusWrapper.innerHTML = '';
   friendsPageWrapper.innerHTML = '';
   imagesWrapper.classList.add('close');
   changeForm.classList.add('close');
+  messageWrapper.classList.add('close');
   statusWrapper.classList.remove('close');
   statusWrapper.innerHTML = '';
   axios({
     method: 'post',
     url: '/getFriendStatus'
   }).then(res => {
-    const statuses = res.data.friendStatuss;
+    const statuses = res.data.friendStatuses;
     statuses.forEach(s => {
       const div = document.createElement('div');
       div.classList.add('alert');
       div.classList.add('alert-info');
+      div.classList.add('status-div');
       statusWrapper.append(div);
-      const h3 = document.createElement('h3');
-      div.append(h3);
-      h3.innerHTML = s.status;
-      h3.style.cursor = 'pointer';
+
       const a = document.createElement('a');
       div.append(a);
       a.innerHTML = s.name + ' ' + s.surname;
       a.href = `/getFriendPage/${s.name}/${s.surname}/${s.ID}`;
+      a.classList.add('status-writer');
+
+      const p = document.createElement('p');
+      div.append(p);
+      p.innerHTML = s.status;
+      p.classList.add('status-text');
+
+      const img = document.createElement('img');
+      div.append(img);
+      img.src = s.status_image;
+      img.classList.add('status-image');
+
       const ul = document.createElement('ul');
-      ul.classList.add('list-group');
+      ul.classList.add('comment-list-group');
       div.append(ul);
+
+      const commentWrapper = document.createElement('div');
+      div.append(commentWrapper);
+      commentWrapper.classList.add('comment-wrapper');
       const input = document.createElement('input');
-      div.append(input);
+      input.classList.add('comment-input');
+      commentWrapper.append(input);
+
       const commentBtn = document.createElement('button');
+      commentBtn.type = 'submit';
+      commentBtn.classList.add('comment-btn');
       commentBtn.innerHTML = 'ADD';
-      div.append(commentBtn);
+      commentWrapper.append(commentBtn);
+
       commentBtn.addEventListener('click', e => {
+        e.preventDefault();
         axios({
           method: 'post',
           url: '/addComment',
@@ -462,9 +517,24 @@ function getFriendStatuss() {
             status_id: s.status_id
           }
         });
+        const commentLi = document.createElement('li');
+        ul.append(commentLi);
+        commentLi.classList.add('comment-list-item');
+
+        const commentWriter = document.createElement('a');
+        commentLi.append(commentWriter);
+        commentWriter.innerHTML = 'ME';
+        commentWriter.href = '/profile';
+        commentWriter.classList.add('comment-writer');
+
+        const commentText = document.createElement('p');
+        commentLi.append(commentText);
+        commentText.classList.add('comment-text');
+        commentText.innerHTML = input.value;
+
         input.value = '';
       });
-      h3.addEventListener('click', e => {
+      p.addEventListener('click', e => {
         ul.innerHTML
           ? (ul.innerHTML = '')
           : axios({
@@ -475,14 +545,18 @@ function getFriendStatuss() {
               const comments = res.data.comments;
               comments.forEach(c => {
                 const li = document.createElement('li');
-                li.classList.add('list-group-item');
+                li.classList.add('comment-list-item');
                 ul.append(li);
-                const h4 = document.createElement('h4');
-                li.append(h4);
-                h4.innerHTML = c.name + ' ' + c.surname;
-                const p = document.createElement('p');
-                li.append(p);
-                p.innerHTML = c.comment;
+                const commentWriter = document.createElement('a');
+                li.append(commentWriter);
+                commentWriter.innerHTML = c.name + ' ' + c.surname;
+                commentWriter.href = '/profile';
+                commentWriter.classList.add('comment-writer');
+
+                const commentText = document.createElement('p');
+                li.append(commentText);
+                commentText.classList.add('comment-text');
+                commentText.innerHTML = c.comment;
               });
             });
       });
@@ -490,97 +564,41 @@ function getFriendStatuss() {
   });
 }
 
-// function getFriendStatuss() {
-//   imagesWrapper.classList.add('close');
-//   statusWrapper.innerHTML = '';
-//   statusWrapper.classList.remove('close');
-//   changeForm.classList.add('close');
-//   friendsPageWrapper.innerHTML = '';
-//   commentListWrapper.innerHTML = '';
-//   axios({
-//     method: 'post',
-//     url: '/getFriendStatus'
-//   }).then(res => {
-//     const statuss = res.data.friendStatuss.filter(s => s !== null);
-//     if (statuss.length === 0) {
-//       const p = document.createElement('p');
-//       statusWrapper.append(p);
-//       p.innerHTML = 'No statuses yet';
-//     }
-//     statuss.forEach(e => {
-//       let friendStatus = e.status;
-//       let friendComments = e.comments;
-//       const div = document.createElement('div');
-//       div.classList.add('alert');
-//       div.classList.add('alert-info');
-//       div.classList.add('status-div');
-//       statusWrapper.append(div);
-//       div.innerHTML = friendStatus.status;
-//       const a = document.createElement('a');
-//       a.href = a.href = `/getFriendPage/${friendStatus.name}/${friendStatus.surname}/${friendStatus.ID}`;
-//       a.innerHTML = friendStatus.name + ' ' + friendStatus.surname;
-//       const ul = document.createElement('ul');
-//       div.append(ul);
-//       friendComments.forEach(c => {
-//         const li = document.createElement('li');
-//         ul.append(li);
-//         li.innerHTML = c.comment;
-//       });
-//       div.append(a);
-//       const form = document.createElement('form');
-//       div.append(form);
-//       const commentInput = document.createElement('input');
-//       form.append(commentInput);
-//       const comentBtn = document.createElement('button');
-//       form.append(comentBtn);
-//       comentBtn.classList.add('btn');
-//       comentBtn.classList.add('btn-sm');
-//       comentBtn.classList.add('btn-primary');
-//       comentBtn.innerHTML = 'Add';
-//       comentBtn.addEventListener('click', e => {
-//         e.preventDefault();
-//         axios({
-//           method: 'post',
-//           url: '/addComent',
-//           data: {
-//             comment: commentInput.value,
-//             status_id: friendStatus.status_id
-//           }
-//         });
-//         location.reload(true);
-//         commentInput.value = '';
-//       });
-//       const btn = document.createElement('button');
-//       btn.classList.add('btn');
-//       btn.classList.add('btn-sm');
-//       btn.classList.add('btn-primary');
-//       btn.innerHTML = 'Like';
-//       div.append(btn);
-//     });
-//   });
-// }
-
 // const messageForm = document.getElementById('send-container')
 // const messageContainer = document.getElementById('message-container')
-// const messageInput = document.getElementById('message-input')
-// const socket = io('http://localhost:3000')
 
-// //socket chat
+const socket = io('http://localhost:3000');
 
-// socket.on("chat-message", data => {
-//     appendMessage(data)
-// })
-// messageForm.addEventListener('submit', e => {
-//     e.preventDefault()
-//     const message = messageInput.value
-//     socket.emit('send-chat-message', message)
-//     appendMessage(message)
-//     messageInput.value = ''
+const sendMessageBtn = document.querySelector('.sendMessageBtn');
+const sendMessageInput = document.querySelector('.sendMessageText');
+const messagesListGroup = document.querySelector('.messagel-list-group');
+const messagesContentBtn = document.getElementById('messages-btn');
+const MessageFriendsGroup = document.querySelector('.message-friends-group');
 
-// })
+messagesContentBtn.addEventListener('click', e => {
+  e.preventDefault();
+  changeForm.classList.add('close');
+  imagesWrapper.classList.add('close');
+  friendsPageWrapper.innerHTML = '';
+  statusWrapper.innerHTML = '';
+  statusWrapper.classList.add('close');
+  messageWrapper.classList.remove('close');
+  MessageFriendsGroup.innerHTML = '';
+  axios({
+    method: 'post',
+    url: '/getFriendList'
+  }).then(res => {
+    const friends = res.data.friends;
+    friends.forEach(e => {
+      const li = document.createElement('li');
+      MessageFriendsGroup.append(li);
+      li.classList.add('message-friends-list-item');
+      li.innerHTML = e.name + ' ' + e.surname;
+    });
+  });
+});
 
-// function appendMessage(message){
-//     const messageElement = document.createElement('div')
-//     messageElement.innerText = message
-//     messageContainer.append(messageElement)
-//   }
+sendMessageBtn.addEventListener('click', e => {
+  e.preventDefault();
+  socket.emit('new_message', sendMessageInput.value);
+});

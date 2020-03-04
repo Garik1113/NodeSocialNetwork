@@ -144,7 +144,9 @@ CREATE TABLE `statuss`  (
   PRIMARY KEY (`status_id`) USING BTREE,
   CONSTRAINT `statuss_ibfk_1` FOREIGN KEY (`status_id`) REFERENCES `users` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
-
+ALTER TABLE `statuss`
+  ADD CONSTRAINT `statuss_ibfk_1` FOREIGN KEY (`status_id`) 
+      REFERENCES `users` (`ID`);
 -- ----------------------------
 -- Records of statuss
 -- ----------------------------

@@ -35,8 +35,11 @@ const storageForStatuses = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage }).single('profilePhoto');
-const uploadImage = multer({ storage: storageForImages }).single('image');
-const uploadStatusImage = multer({ storage: storageForStatuses }).single('statusImage');
+
+const uploadStatusImage = multer({ storage: storageForStatuses }).single(
+  'statusImage'
+);
+const uploadImage = multer({ storage: storageForImages }).single('regImage');
 
 class Controller {
   getHomePage(req, res) {
@@ -181,7 +184,6 @@ class Controller {
         findedUsers.push(i);
 
         if (e === searchingUsers.length - 1) {
-          // console.log(findedUsers);
           res.send({ findedUsers: findedUsers });
         }
       });
@@ -365,6 +367,16 @@ class Controller {
     );
   }
 
+  removeRequest(req, res) {
+    connection.query(
+      `DELETE FROM requests WHERE user_one_id = '${req.session.userId}' AND user_two_id = '${req.body.user_two_id}'`,
+      (err, data) => {
+        if (err) throw err;
+      }
+    );
+    res.send();
+  }
+
   async checkFriendRequests(req, res) {
     const friendRequestsInform = await (function() {
       return new Promise((resolve, reject) => {
@@ -383,14 +395,14 @@ class Controller {
 
   acceptFriendRequest(req, res) {
     connection.query(
-      `DELETE FROM requests WHERE user_one_id = ${req.body.userId} AND user_two_id = ${req.session.userId}`,
+      `DELETE FROM requests WHERE user_one_id = ${req.body.user_two_id} AND user_two_id = ${req.session.userId}`,
       (err, data) => {
         if (err) throw err;
       }
     );
 
     connection.query(
-      `INSERT INTO relationships (user_one_id, user_two_id) VALUES (${req.body.userId}, ${req.session.userId})`,
+      `INSERT INTO relationships (user_one_id, user_two_id) VALUES (${req.body.user_two_id}, ${req.session.userId})`,
       (err, data) => {
         if (err) throw err;
       }
@@ -399,7 +411,7 @@ class Controller {
 
   deslineFriendRequest(req, res) {
     connection.query(
-      `DELETE FROM requests WHERE user_one_id = ${req.body.userId} AND user_two_id = ${req.session.userId}`,
+      `DELETE FROM requests WHERE user_one_id = ${req.body.user_two_id} AND user_two_id = ${req.session.userId}`,
       (err, data) => {
         if (err) throw err;
       }
@@ -463,7 +475,7 @@ class Controller {
       const friend = await (function() {
         return new Promise((resolve, reject) => {
           connection.query(
-            `SELECT * FROM users WHERE ID = '${friendId}'`,
+            `SELECT * FROM users WHERE ID= '${friendId}'`,
             (err, data) => {
               if (err) throw err;
               resolve(data);
@@ -471,7 +483,6 @@ class Controller {
           );
         });
       })();
-
       res.render('friendPage', { friend: friend[0] });
     } else {
       res.redirect('/*');
@@ -481,23 +492,20 @@ class Controller {
   shareStatus(req, res) {
     uploadStatusImage(req, res, err => {
       if (err) throw err;
-      if(req.file || res.body.status){
+      if (req.file || req.body.status) {
         connection.query(
-         `INSERT INTO statuss(status, user_id, image) VALUES('${req.body.status}', '${req.session.userId}', '/uploads/statusImages/${req.file.filename}')`,
-            (err, data) => {
-         if (err) throw err;
-         }
-       );
-       res.redirect('/profile')
+          `INSERT INTO statuses(status, user_id, status_image) VALUES('${
+            req.body.status
+          }', '${req.session.userId}', '/uploads/statusImages/${
+            req.file ? req.file.filename : 'statusImage.png'
+          }')`,
+          (err, data) => {
+            if (err) throw err;
+          }
+        );
+        res.redirect('/profile');
       }
     });
-
-  // res.redirect('/profile');
-    // if (req.body.status) {
-    //   
-    // }
-
-   
   }
 
   async getFriendStatus(req, res) {
@@ -516,14 +524,25 @@ class Controller {
     let friendsID = [...new Set(friends.map(e => Object.values(e)).flat())];
 
     if (!friendsID.length) {
-      return res.send({ friendStatuss: [] });
+      const statuses = await (function() {
+        return new Promise((resolve, reject) => {
+          connection.query(
+            `SELECT * FROM statuses JOIN users ON users.ID = statuses.user_id WHERE user_id = '${req.session.userId}'`,
+            (err, data) => {
+              if (err) throw err;
+              resolve(data);
+            }
+          );
+        });
+      })();
+      return res.send({ friendStatuses: statuses });
     }
-    let friendStatuss = [];
+    let friendStatuses = [];
     friendsID.map(async (e, k) => {
       const status = await (function() {
         return new Promise((resolve, reject) => {
           connection.query(
-            `SELECT * FROM statuss JOIN users ON users.ID = statuss.user_id WHERE user_id = '${e}'`,
+            `SELECT * FROM statuses JOIN users ON users.ID = statuses.user_id WHERE user_id = '${e}'`,
             (err, data) => {
               if (err) reject(err);
               resolve(data);
@@ -531,22 +550,22 @@ class Controller {
           );
         });
       })();
-      status.forEach(l => friendStatuss.push(l));
+      status.forEach(l => friendStatuses.push(l));
       if (k === friendsID.length - 1) {
-        res.send({ friendStatuss });
+        res.send({ friendStatuses });
       }
     });
 
-    // console.log(friendStatuss);
-    // friendStatuss.push(statuses[0]);
-    // console.log(friendStatuss);
+    // console.log(friendStatuses);
+    // friendStatuses.push(statuses[0]);
+    // console.log(friendStatuses);
     // async function get() {
-    //   await friendStatuss.push(statuses);
+    //   await friendStatuses.push(statuses);
     // }
 
     //   return new Promise((resolve, reject) => {});
-    //   console.log(friendStatuss);
-    //   friendStatuss.push(status[0]);
+    //   console.log(friendStatuses);
+    //   friendStatuses.push(status[0]);
     //   if (status[0]) {
     //     let status_id = status[0].status_id;
     //     const comments = await (function() {
@@ -560,15 +579,15 @@ class Controller {
     //         );
     //       });
     //     })();
-    //     friendStatuss.push({ status: status[0], comments });
+    //     friendStatuses.push({ status: status[0], comments });
     //   } else {
-    //     friendStatuss.push(null);
+    //     friendStatuses.push(null);
     //   }
-    //   if (friendStatuss.length === friendsID.length) {
-    //     res.send({ friendStatuss });
+    //   if (friendStatuses.length === friendsID.length) {
+    //     res.send({ friendStatuses });
     //   }
     // });
-    // console.log(friendStatuss);
+    // console.log(friendStatuses);
   }
 
   async getComments(req, res) {

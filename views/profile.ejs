@@ -61,6 +61,7 @@
                     <button class="message-notes" id="messagesBtn">
                       Messages
                     </button>
+
                     <button class="message-notes" id="notificationBtn">
                       Notifications
                     </button>
@@ -99,15 +100,33 @@
               </div>
               <div class="row">
                 <div class="col-12">
-                  <form class="status-form" enctype="multipart/form-data" method="POST" action="/shareStatus">
+                  <form
+                    class="share-status-form"
+                    enctype="multipart/form-data"
+                    method="POST"
+                    action="/shareStatus"
+                  >
                     <input
                       type="text"
                       name="status"
                       placeholder="Share status"
-                      class="status-input"
+                      class="share-status-input"
                     />
-                    <input type="file" name="statusImage">
-                    <button class="btn btn-primary status-btn" type="submit">Share</button>
+                    <div class="upload-image-wrapper">
+                      <input
+                        type="file"
+                        name="statusImage"
+                        id="file"
+                        class="share-input-file"
+                      />
+                      <label for="file" class="js-labelFile btn-small-success">
+                        <span class="js-fileName">Image</span>
+                      </label>
+                    </div>
+
+                    <button class="share-status-btn" type="submit">
+                      Share
+                    </button>
                   </form>
                 </div>
               </div>
@@ -117,10 +136,17 @@
       </div>
 
       <div class="row main-wrapper">
-        <div class="col-2 offset-2">
+        <div class="col-2 offset-1">
           <div>
             <button class="sittings-wrapper" id="friends-btn" type="submit">
               Friends
+            </button>
+          </div>
+        </div>
+        <div class="col-2">
+          <div>
+            <button class="sittings-wrapper" id="messages-btn" type="submit">
+              Messages
             </button>
           </div>
         </div>
@@ -147,6 +173,36 @@
         </div>
       </div>
 
+      <div class="message-wrapper close">
+        <div class="row">
+          <div class="col-4">
+            <div class="messages-left-content">
+              <ul class="message-friends-group"></ul>
+            </div>
+          </div>
+          <div class="col-8">
+            <div class="messages-right-content">
+              <div class="messages">
+                <ul class="messagel-list-group"></ul>
+              </div>
+              <div class="sendMessageWrapper">
+                <form class="send-message-form">
+                  <input
+                    type="text"
+                    placeholder="Enter message"
+                    class="sendMessageText"
+                  />
+                  <input
+                    type="submit"
+                    value="Send"
+                    class="sendMessageBtn btn-small-success"
+                  />
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="status-wrapper"></div>
       <form id="changeForm" class="changeForm close">
         <h1>Change Information</h1>
@@ -163,10 +219,14 @@
       </form>
 
       <div class="images-wrapper close">
+        <div class="modal-image" id="myModal">
+          <span class="closeSpan">&times;</span>
+          <img class="modal-content" id="img01" />
+        </div>
         <form action="/uploadPhoto" method="POST" enctype="multipart/form-data">
           <input
             type="file"
-            name="image"
+            name="regImage"
             id="file"
             class="upload-Photo-inputfile"
           />
@@ -182,6 +242,7 @@
 
     <%- include('./partials/footer') %>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/js/socket.io.js"></script>
     <script src="/js/index.js"></script>
   </body>
 </html>

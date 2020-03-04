@@ -50,6 +50,7 @@ app.post('/deleteImage', Controller.deleteImage);
 app.post('/SetAsProfilePic', Controller.selectProfileImage);
 app.post('/SearchUser', Controller.searchUser);
 app.post('/sendRequest', Controller.sendRequest);
+app.post('/removeRequest', Controller.removeRequest);
 app.post('/checkFriendRequests', Controller.checkFriendRequests);
 app.post('/acceptFriendRequest', Controller.acceptFriendRequest);
 app.post('/deslineFriendRequest', Controller.deslineFriendRequest);
@@ -59,4 +60,17 @@ app.post('/shareStatus', Controller.shareStatus);
 app.post('/getFriendStatus', Controller.getFriendStatus);
 app.post('/addComment', Controller.addComment);
 app.post('/getComents', Controller.getComments);
-app.listen(PORT);
+// app.listen(PORT);
+
+// chat socket io
+
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+io.on('connection', socket => {
+  // console.log("User connected", socket.id)
+  socket.on('new_message', data => {
+    console.log('Client says', data);
+  });
+});
+
+http.listen(PORT);
