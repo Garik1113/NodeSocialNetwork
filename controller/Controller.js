@@ -63,6 +63,7 @@ class Controller {
   }
 
   uploadNewPhoto(req, res) {
+    console.log(req.file)
     if (req.session.userId) {
       uploadImage(req, res, err => {
         if (err) throw err;
@@ -378,6 +379,7 @@ class Controller {
   }
 
   async checkFriendRequests(req, res) {
+    
     const friendRequestsInform = await (function() {
       return new Promise((resolve, reject) => {
         connection.query(
