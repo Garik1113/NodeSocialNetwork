@@ -527,6 +527,7 @@ function getFriendStatuses() {
     url: '/getFriendStatus'
   }).then(res => {
     const statuses = res.data.friendStatuses;
+    console.log(statuses)
     const ID = statusWrapper.getAttribute('data-id');
     const userName = statusWrapper.getAttribute('data-name');
     const userSurname = statusWrapper.getAttribute('data-surname');
@@ -564,10 +565,38 @@ function getFriendStatuses() {
       p.innerHTML = s.status;
       p.classList.add('status-text');
 
+
       const img = document.createElement('img');
       div.append(img);
       img.src = s.status_image;
       img.classList.add('status-image');
+
+      const countOfLikes = document.createElement('b')
+      countOfLikes.innerHTML = s.count_of_likes
+      div.append(countOfLikes)
+
+      const likeBtn = document.createElement('span')
+      div.appendChild(likeBtn)
+      likeBtn.innerHTML = '&#9996;'
+      
+      s.likeStatus ? likeBtn.className = 'unliked-btn' : likeBtn.className = 'liked-btn'
+
+
+      likeBtn.addEventListener('click', () => {
+        if(likeBtn.className === 'unliked-btn'){
+          likeBtn.className = 'liked-btn'
+          countOfLikes.innerHTML= Number(countOfLikes.innerHTML) - 1
+        }else{
+          likeBtn.className = 'unliked-btn'
+          countOfLikes.innerHTML= Number(countOfLikes.innerHTML) + 1
+        }
+        // likeBtn.className === 'unliked-btn' ? likeBtn.className = 'liked-btn' : likeBtn.className = 'unliked-btn'
+        axios({
+          method: 'post',
+          url: '/likeStatus',
+          data: {status_id: s.status_id}
+        })
+      })
 
       const ul = document.createElement('ul');
       ul.classList.add('comment-list-group');

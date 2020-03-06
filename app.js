@@ -61,6 +61,7 @@ app.post('/getFriendStatus', Controller.getFriendStatus);
 app.post('/addComment', Controller.addComment);
 app.post('/getComents', Controller.getComments);
 app.post('/removeStatus', Controller.removeStatus);
+app.post('/likeStatus', Controller.likeStatus)
 
 // app.listen(PORT);
 

@@ -540,7 +540,11 @@ class Controller {
       const status = await (function() {
         return new Promise((resolve, reject) => {
           connection.query(
-            `SELECT * FROM statuses JOIN users ON users.ID = statuses.user_id WHERE user_id = '${e}'`,
+            `SELECT statuses.*,users.*,count(statuses.status_id) as count_of_likes FROM statuses
+            JOIN users ON users.ID = statuses.user_id
+            JOIN likes ON likes.status_id = statuses.status_id 
+            WHERE users.ID = '${e}'
+             GROUP BY statuses.status_id`,
             (err, data) => {
               if (err) reject(err);
               resolve(data);
@@ -550,42 +554,31 @@ class Controller {
       })();
       status.forEach(l => friendStatuses.push(l));
       if (k === friendsID.length - 1) {
+        for(let i=0;i<friendStatuses.length;i++){
+          const ifLikes = await (function() {
+            return new Promise((resolve, reject) => {
+              connection.query(
+                `SELECT * from likes
+                WHERE user_id=${req.session.userId} and status_id=${friendStatuses[i].status_id}`,
+                (err, data) => {
+                  if (err) reject(err);
+                  resolve(data);
+                }
+              );
+            });
+          })();
+          if(ifLikes.length){
+            friendStatuses[i].likeStatus = true
+          }else {
+            friendStatuses[i].likeStatus = false
+          }
+
+        }
+
         res.send({ friendStatuses });
       }
     });
 
-    // console.log(friendStatuses);
-    // friendStatuses.push(statuses[0]);
-    // console.log(friendStatuses);
-    // async function get() {
-    //   await friendStatuses.push(statuses);
-    // }
-
-    //   return new Promise((resolve, reject) => {});
-    //   console.log(friendStatuses);
-    //   friendStatuses.push(status[0]);
-    //   if (status[0]) {
-    //     let status_id = status[0].status_id;
-    //     const comments = await (function() {
-    //       return new Promise((resolve, reject) => {
-    //         connection.query(
-    //           `SELECT * FROM comments JOIN users ON user_id = ID WHERE status_id = '${status_id}'`,
-    //           (err, data) => {
-    //             if (err) throw err;
-    //             resolve(data);
-    //           }
-    //         );
-    //       });
-    //     })();
-    //     friendStatuses.push({ status: status[0], comments });
-    //   } else {
-    //     friendStatuses.push(null);
-    //   }
-    //   if (friendStatuses.length === friendsID.length) {
-    //     res.send({ friendStatuses });
-    //   }
-    // });
-    // console.log(friendStatuses);
   }
 
   async getComments(req, res) {
@@ -619,6 +612,34 @@ class Controller {
       }
     );
     res.send();
+  }
+
+  async likeStatus(req, res) {
+
+    const like = await (function(){
+      return new Promise((resolve, reject) => {
+        connection.query(`SELECT * FROM likes WHERE status_id = '${req.body.status_id}' AND user_id = '${req.session.userId}'`, (err, data) => {
+          if(err) throw err
+          resolve(data)
+        } )
+      })
+    })()
+    console.log(like)
+    if(like.length){
+      connection.query(`DELETE FROM likes WHERE like_id = '${like[0].like_id}'`, (err, data) => {
+        if(err) throw err
+
+      })
+      res.send()
+    }else{
+       connection.query(`INSERT INTO likes(user_id, status_id) VALUES('${req.session.userId}', '${req.body.status_id}')`, (err, data) => {
+          if(err) throw err
+      })
+    res.send()
+    }
+
+    
+    
   }
 }
 module.exports = new Controller();
