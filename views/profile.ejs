@@ -203,7 +203,13 @@
           </div>
         </div>
       </div>
-      <div class="status-wrapper"></div>
+      <div
+        class="status-wrapper"
+        data-id="<%= user? user[0].ID : '' %>"
+        data-name="<%= user? user[0].name : '' %>"
+        data-surname="<%= user? user[0].surname : '' %>"
+      ></div>
+
       <form id="changeForm" class="changeForm close">
         <h1>Change Information</h1>
         <div class="change-input-wrapper">
@@ -218,23 +224,21 @@
         </div>
       </form>
 
-      <div class="images-wrapper close">
+      <div class="images-wrapper">
         <div class="modal-image" id="myModal">
           <span class="closeSpan">&times;</span>
           <img class="modal-content" id="img01" />
         </div>
-        <form action="/uploadPhoto" method="POST" enctype="multipart/form-data">
-          <input
-            type="file"
-            name="regImage"
-            id="file"
-            class="upload-Photo-inputfile"
-          />
-          <label for="file">Upload photo</label>
-          <button type="submit" class="upload-photo-btn" id="uploadPhotoBtn">
-            Add
-          </button>
+
+        <form
+          action="/uploadRegImage"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <input type="file" name="myimage" class="upload-reg-image-input" />
+          <input type="submit" value="send" />
         </form>
+
         <ul class="photos-list-group"></ul>
       </div>
       <div class="friends-page-wrapper"></div>

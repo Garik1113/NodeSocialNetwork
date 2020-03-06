@@ -557,6 +557,13 @@ footer {
   background: #0f663a;
 }
 
+.removeSpan {
+  font-size: 40px;
+  color: #e20d42;
+  cursor: pointer;
+  margin: 10px;
+}
+
 /* Status Content END*/
 
 /* Buttons */

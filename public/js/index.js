@@ -7,6 +7,9 @@ const notiсeBtn = document.getElementById('notificationBtn');
 const statusWrapper = document.querySelector('.status-wrapper');
 const messageWrapper = document.querySelector('.message-wrapper');
 
+// document.getElementById('uploadPhotoBtn').addEventListener('click', e => {
+//   e.preventDefault();
+// });
 //Searching users
 
 searchInput.addEventListener('input', async e => {
@@ -22,9 +25,7 @@ searchInput.addEventListener('input', async e => {
     .then(res => {
       findedUsers = res.data.findedUsers;
 
-       console.log(findedUsers)
       findedUsers.forEach(e => {
-      //   // console.log(e.status);
         let li = document.createElement('li');
         const aFriendLink = document.createElement('a');
         aFriendLink.innerHTML = e.name + ' ' + e.surname;
@@ -33,181 +34,160 @@ searchInput.addEventListener('input', async e => {
         li.classList.add('finded-list-item');
         li.append(aFriendLink);
         listWrapper.append(li);
-         
-        if(e.status=='Send request'){
-          let acceptBtn = document.createElement('button');
-            acceptBtn.innerHTML = 'Send request';
-            acceptBtn.className='send_request'
-            // acceptBtn.className+='send_request'
-            acceptBtn.setAttribute('data-id',e.ID)
-            li.appendChild(acceptBtn)
-        }
-        else if(e.status=='Request sended'){
-          let acceptBtn = document.createElement('button');
-            acceptBtn.innerHTML = 'cansel';
-            acceptBtn.className='cansel'
-            // acceptBtn.className+='send_request'
-           
-            li.appendChild(acceptBtn)
-        }
 
-      //   while (true) {
-      //     if (e.status === 'Has Sended request') {
-      //       let acceptBtn = document.createElement('button');
-      //       acceptBtn.classList.add('btn-small-success');
-      //       acceptBtn.innerHTML = 'Accept';
-      //       li.append(acceptBtn);
-
-      //       let deslineBtn = document.createElement('button');
-      //       deslineBtn.classList.add('btn-small-warning');
-      //       deslineBtn.innerHTML = 'Desline';
-      //       li.append(deslineBtn);
-      //       acceptBtn.addEventListener('click', k => {
-      //         k.preventDefault();
-      //         axios({
-      //           method: 'post',
-      //           url: '/acceptFriendRequest',
-      //           data: { user_two_id: e.ID }
-      //         });
-      //         acceptBtn.remove();
-      //         deslineBtn.remove();
-      //         e.status = 'Friend';
-      //       });
-      //       deslineBtn.addEventListener('click', k => {
-      //         k.preventDefault();
-      //         axios({
-      //           method: 'post',
-      //           url: '/deslineFriendRequest',
-      //           data: { user_two_id: e.ID }
-      //         });
-      //         deslineBtn.remove();
-         
-      //       });
-      //       return;
-      //     } else if (e.status === 'Request sended') {
-      //       const removeBtn = document.createElement('button');
-      //       removeBtn.innerHTML = 'Cancel';
-      //       removeBtn.classList.add('btn-small-warning');
-      //       li.append(removeBtn);
-      //       removeBtn.addEventListener('click', k => {
-      //         k.preventDefault();
-      //         axios({
-      //           method: 'post',
-      //           url: '/removeRequest',
-      //           data: { user_two_id: e.ID }
-      //         });
-      //         removeBtn.remove();
-      //         e.status = 'Send request';
-      //         return;
-      //       });
-      //       return;
-      //     }
-      //     if (e.status === 'Send request') {
-      //       const sendRequestBtn = document.createElement('button');
-      //       sendRequestBtn.classList.add('btn-small-success');
-      //       sendRequestBtn.innerHTML = 'Send request';
-      //       li.append(sendRequestBtn);
-      //       sendRequestBtn.addEventListener('click', l => {
-      //         sendRequestBtn.remove();
-      //         l.preventDefault();
-      //         axios({
-      //           method: 'post',
-      //           url: '/sendRequest',
-      //           data: { user_two_id: e.ID }
-      //         });
-      //         sendRequestBtn.remove();
-      //         const removeBtn = document.createElement('button');
-      //         removeBtn.innerHTML = 'Cancel';
-      //         removeBtn.classList.add('btn-small-warning');
-      //         li.append(removeBtn);
-      //         removeBtn.addEventListener('click', function(e){
-      //           e.preventDefault();
-      //           axios({
-      //             method: 'post',
-      //             url: '/removeRequest',
-      //             data: { user_two_id: e.ID }
-      //           });
-              
-      //           const sendRequestBtn = document.createElement('button');
-      //           sendRequestBtn.classList.add('btn-small-success');
-      //           sendRequestBtn.innerHTML = 'Send request';
-             
-      //      this.parentElement.appendChild(sendRequestBtn)
-      //          removeBtn.remove();
-      //         });
-      //       });
-      //       return;
-      //     } else if (e.status === 'Friend') {
-      //       const removeFriend = document.createElement('button');
-      //       removeFriend.classList.add('btn-small-warning');
-      //       removeFriend.innerHTML = 'Remove';
-      //       li.append(removeFriend);
-      //       removeFriend.addEventListener('click', k => {
-      //         k.preventDefault();
-      //         axios({
-      //           method: 'post',
-      //           url: '/removeFriend',
-      //           data: { userId: e.ID }
-      //         });
-      //         removeFriend.remove();
-      //         e.status = 'Send request';
-      //       });
-      //       return;
-      //     }
-      //   }
+        if (e.status === 'Send request') {
+          let sendReqBtn = document.createElement('button');
+          sendReqBtn.innerHTML = 'Send request';
+          sendReqBtn.className = 'send_request';
+          sendReqBtn.classList.add('btn-small-success');
+          sendReqBtn.setAttribute('data-id', e.ID);
+          li.appendChild(sendReqBtn);
+        } else if (e.status === 'Request sended') {
+          let cancelReqBtn = document.createElement('button');
+          cancelReqBtn.innerHTML = 'Cancel';
+          cancelReqBtn.className = 'cancel_request';
+          cancelReqBtn.classList.add('btn-small-warning');
+          cancelReqBtn.setAttribute('data-id', e.ID);
+          li.appendChild(cancelReqBtn);
+        } else if (e.status === 'Friend') {
+          let removeFriendBtn = document.createElement('button');
+          removeFriendBtn.innerHTML = 'Remove';
+          removeFriendBtn.className = 'remove_friend';
+          removeFriendBtn.classList.add('btn-small-warning');
+          removeFriendBtn.setAttribute('data-id', e.ID);
+          li.appendChild(removeFriendBtn);
+        } else if (e.status === 'Has Sended request') {
+          let acceptReqBtn = document.createElement('button');
+          acceptReqBtn.innerHTML = 'Accept';
+          acceptReqBtn.className = 'accept_request';
+          acceptReqBtn.classList.add('btn-small-success');
+          acceptReqBtn.setAttribute('data-id', e.ID);
+          li.append(acceptReqBtn);
+          let deslineReqBtn = document.createElement('button');
+          deslineReqBtn.innerHTML = 'Desline';
+          deslineReqBtn.className = 'desline_request';
+          deslineReqBtn.classList.add('btn-small-warning');
+          deslineReqBtn.setAttribute('data-id', e.ID);
+          li.append(deslineReqBtn);
+        }
       });
-
-
-
-      let send_request =document.querySelectorAll('.send_request')
-
-      for(let i=0;i<send_request.length;i++){
-        send_request[i].addEventListener('click',sendfunction)
+      function sendRequestFunction() {
+        let user_two_id = this.getAttribute('data-id');
+        axios({
+          method: 'post',
+          url: '/sendRequest',
+          data: { user_two_id }
+        });
+        let cancelBtn = document.createElement('button');
+        cancelBtn.innerHTML = 'Cancel';
+        cancelBtn.className = 'cancel_requst';
+        cancelBtn.classList.add('btn-small-warning');
+        cancelBtn.setAttribute('data-id', user_two_id);
+        cancelBtn.addEventListener('click', cancelRequestFunction);
+        this.parentElement.appendChild(cancelBtn);
+        this.remove();
       }
 
-      let cansel =document.querySelectorAll('.cansel')
-
-      for(let i=0;i<cansel.length;i++){
-        cansel[i].addEventListener('click',canselfunc)
+      function cancelRequestFunction() {
+        let user_two_id = this.getAttribute('data-id');
+        axios({
+          method: 'post',
+          url: '/removeRequest',
+          data: { user_two_id }
+        });
+        let sendReqBtn = document.createElement('button');
+        sendReqBtn.innerHTML = 'Send Request';
+        sendReqBtn.className = 'send_request';
+        sendReqBtn.classList.add('btn-small-success');
+        sendReqBtn.setAttribute('data-id', user_two_id);
+        sendReqBtn.addEventListener('click', sendRequestFunction);
+        this.parentElement.appendChild(sendReqBtn);
+        this.remove();
       }
 
+      function removeFriend() {
+        let userId = this.getAttribute('data-id');
+        axios({
+          method: 'post',
+          url: '/removeFriend',
+          data: { userId }
+        });
+        let sendReqBtn = document.createElement('button');
+        sendReqBtn.innerHTML = 'Send Request';
+        sendReqBtn.className = 'send_request';
+        sendReqBtn.classList.add('btn-small-success');
+        sendReqBtn.setAttribute('data-id', userId);
+        sendReqBtn.addEventListener('click', sendRequestFunction);
+        this.parentElement.appendChild(sendReqBtn);
+        this.remove();
+      }
 
-   function sendfunction(){
+      function acceptRequest() {
+        let user_two_id = this.getAttribute('data-id');
+        axios({
+          method: 'post',
+          url: '/acceptFriendRequest',
+          data: { user_two_id }
+        });
+        let removeFriendBtn = document.createElement('button');
+        removeFriendBtn.innerHTML = 'Remove';
+        removeFriendBtn.className = 'remove_friend';
+        removeFriendBtn.classList.add('btn-small-warning');
+        removeFriendBtn.setAttribute('data-id', user_two_id);
+        removeFriendBtn.addEventListener('click', removeFriend);
+        this.parentElement.appendChild(removeFriendBtn);
+        this.parentElement.children[2].remove();
+        this.remove();
+      }
 
-    let user_two_id = this.getAttribute('data-id')
-    console.log(user_two_id)
-              axios({
-               method: 'post',
-               url: '/sendRequest',
-               data: { user_two_id}
-             })
-              let acceptBtn = document.createElement('button');
-              acceptBtn.innerHTML = 'cansel';
-              acceptBtn.className='cansel'
-              
-              acceptBtn.addEventListener('click',canselfunc)
-              this.parentElement.appendChild(acceptBtn)
-              this.remove()
-      
-    
-   }
+      function deslineRequest() {
+        let user_two_id = this.getAttribute('data-id');
+        axios({
+          method: 'post',
+          url: '/deslineFriendRequest',
+          data: { user_two_id }
+        });
+        let sendReqBtn = document.createElement('button');
+        sendReqBtn.innerHTML = 'Send Request';
+        sendReqBtn.className = 'send_request';
+        sendReqBtn.classList.add('btn-small-success');
+        sendReqBtn.setAttribute('data-id', user_two_id);
+        sendReqBtn.addEventListener('click', sendRequestFunction);
+        this.parentElement.appendChild(sendReqBtn);
+        this.parentElement.children[1].remove();
+        this.remove();
+      }
 
-      function canselfunc(){
-        alert(2)
+      let send_request_btns = document.querySelectorAll('.send_request');
+
+      for (let i = 0; i < send_request_btns.length; i++) {
+        send_request_btns[i].addEventListener('click', sendRequestFunction);
+      }
+
+      let cansel_request_btns = document.querySelectorAll('.cancel_request');
+
+      for (let i = 0; i < cansel_request_btns.length; i++) {
+        cansel_request_btns[i].addEventListener('click', cancelRequestFunction);
+      }
+
+      let remove_friend_btns = document.querySelectorAll('.remove_friend');
+      for (let i = 0; i < remove_friend_btns.length; i++) {
+        remove_friend_btns[i].addEventListener('click', removeFriend);
+      }
+
+      let accept_request_btns = document.querySelectorAll('.accept_request');
+      for (let i = 0; i < accept_request_btns.length; i++) {
+        accept_request_btns[i].addEventListener('click', acceptRequest);
+      }
+
+      let desline_request_btns = document.querySelectorAll('.desline_request');
+      for (let i = 0; i < desline_request_btns.length; i++) {
+        desline_request_btns[i].addEventListener('click', deslineRequest);
       }
     })
+
     .catch(e => console.log(e));
-
-
 });
-
-// let send_request = document.querySelectorAll('.send_request')
-// console.log()
-// for(let i =0 ; i<send_request.length;i++){
-//   send_request[i].addEventListener('click',function(){
-//     alert()
-//   })
-// }
 
 document.querySelector('.container').addEventListener('click', () => {
   listWrapper.innerHTML = null;
@@ -515,22 +495,21 @@ const commentListWrapper = document.querySelector('.comment-list-wrapper');
 newsBtn.addEventListener('click', getFriendStatuses);
 window.onload = () => {
   statusWrapper.innerHTML = '';
-  function checkFriendRequests(){
+  function checkFriendRequests() {
     axios({
-    method: 'post',
-    url: '/checkFriendRequests'
-  }).then(res => {
-    let num = res.data.friendRequestsInform.length;
-    console.log(num)
-    if (num > 0) {
-      notiсeBtn.innerHTML = num + ' ' + 'Notifications';
-    }else if(num <= 0){
-      notiсeBtn.innerHTML ='Notifications';
-    }
-  });
-}
+      method: 'post',
+      url: '/checkFriendRequests'
+    }).then(res => {
+      let num = res.data.friendRequestsInform.length;
+      if (num > 0) {
+        notiсeBtn.innerHTML = num + ' ' + 'Notifications';
+      } else if (num <= 0) {
+        notiсeBtn.innerHTML = 'Notifications';
+      }
+    });
+  }
   // checkFriendRequests()
-  setInterval(checkFriendRequests,1000)
+  setInterval(checkFriendRequests, 1000);
 
   getFriendStatuses();
 };
@@ -548,12 +527,31 @@ function getFriendStatuses() {
     url: '/getFriendStatus'
   }).then(res => {
     const statuses = res.data.friendStatuses;
+    const ID = statusWrapper.getAttribute('data-id');
+    const userName = statusWrapper.getAttribute('data-name');
+    const userSurname = statusWrapper.getAttribute('data-surname');
     statuses.forEach(s => {
       const div = document.createElement('div');
       div.classList.add('alert');
       div.classList.add('alert-info');
       div.classList.add('status-div');
       statusWrapper.append(div);
+
+      if (s.ID == ID) {
+        const span = document.createElement('span');
+        span.innerHTML = '&times;';
+        span.classList.add('removeSpan');
+        div.append(span);
+
+        span.addEventListener('click', () => {
+          axios({
+            method: 'post',
+            url: '/removeStatus',
+            data: { status_id: s.status_id }
+          });
+          span.parentElement.remove();
+        });
+      }
 
       const a = document.createElement('a');
       div.append(a);
@@ -604,7 +602,7 @@ function getFriendStatuses() {
 
         const commentWriter = document.createElement('a');
         commentLi.append(commentWriter);
-        commentWriter.innerHTML = 'ME';
+        commentWriter.innerHTML = userName + ' ' + userSurname;
         commentWriter.href = '/profile';
         commentWriter.classList.add('comment-writer');
 
@@ -645,8 +643,7 @@ function getFriendStatuses() {
   });
 }
 
-// const messageForm = document.getElementById('send-container')
-// const messageContainer = document.getElementById('message-container')
+// chat with socket io
 
 const socket = io('http://localhost:3000');
 

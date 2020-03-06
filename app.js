@@ -45,7 +45,7 @@ app.post(
 app.post('/photos', Controller.getPhotosPage);
 app.post('/getUserInform', Controller.getUserInform);
 app.post('/saveChanges', Controller.saveChanges);
-app.post('/uploadPhoto', Controller.uploadNewPhoto);
+app.post('/uploadRegImage', Controller.uploadRegImage);
 app.post('/deleteImage', Controller.deleteImage);
 app.post('/SetAsProfilePic', Controller.selectProfileImage);
 app.post('/SearchUser', Controller.searchUser);
@@ -60,6 +60,8 @@ app.post('/shareStatus', Controller.shareStatus);
 app.post('/getFriendStatus', Controller.getFriendStatus);
 app.post('/addComment', Controller.addComment);
 app.post('/getComents', Controller.getComments);
+app.post('/removeStatus', Controller.removeStatus);
+
 // app.listen(PORT);
 
 // chat socket io

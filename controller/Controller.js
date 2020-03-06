@@ -39,7 +39,8 @@ const upload = multer({ storage: storage }).single('profilePhoto');
 const uploadStatusImage = multer({ storage: storageForStatuses }).single(
   'statusImage'
 );
-const uploadImage = multer({ storage: storageForImages }).single('regImage');
+
+const uploadmyImage = multer({ storage: storageForImages }).single('myimage');
 
 class Controller {
   getHomePage(req, res) {
@@ -62,23 +63,19 @@ class Controller {
     });
   }
 
-  uploadNewPhoto(req, res) {
-    console.log(req.file)
-    if (req.session.userId) {
-      uploadImage(req, res, err => {
-        if (err) throw err;
-        if (req.file) {
-          connection.query(
-            `INSERT INTO images(image_path, user_id) VALUES('/uploads/regularImages/${req.file.filename}', '${req.session.userId}')`,
-            (err, data) => {
-              if (err) throw err;
-            }
-          );
-        }
-      });
-
+  uploadRegImage(req, res) {
+    uploadmyImage(req, res, err => {
+      if (err) throw err;
+      if (req.file) {
+        connection.query(
+          `INSERT INTO images(image_path, user_id) VALUES('/uploads/regularImages/${req.file.filename}', '${req.session.userId}')`,
+          (err, data) => {
+            if (err) throw err;
+          }
+        );
+      }
       res.redirect('/profile');
-    }
+    });
   }
 
   async deleteImage(req, res) {
@@ -379,7 +376,6 @@ class Controller {
   }
 
   async checkFriendRequests(req, res) {
-    
     const friendRequestsInform = await (function() {
       return new Promise((resolve, reject) => {
         connection.query(
@@ -613,6 +609,16 @@ class Controller {
         if (err) throw err;
       }
     );
+  }
+
+  removeStatus(req, res) {
+    connection.query(
+      `DELETE FROM statuses WHERE status_id = '${req.body.status_id}'`,
+      (err, data) => {
+        if (err) throw err;
+      }
+    );
+    res.send();
   }
 }
 module.exports = new Controller();
