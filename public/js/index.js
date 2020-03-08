@@ -7,10 +7,15 @@ const notiсeBtn = document.getElementById('notificationBtn');
 const statusWrapper = document.querySelector('.status-wrapper');
 const messageWrapper = document.querySelector('.message-wrapper');
 
-// document.getElementById('uploadPhotoBtn').addEventListener('click', e => {
-//   e.preventDefault();
-// });
-//Searching users
+//Modal images CONFIG
+
+const modal = document.getElementById('myModal');
+const modalImg = document.getElementById('img01');
+
+const closeSpan = document.querySelectorAll('.closeSpan')[0];
+closeSpan.onclick = function() {
+  modal.style.display = 'none';
+};
 
 searchInput.addEventListener('input', async e => {
   listWrapper.innerHTML = '';
@@ -390,6 +395,11 @@ notiсeBtn.addEventListener('click', e => {
     url: '/checkFriendRequests'
   })
     .then(res => {
+      if (res.data.friendRequestsInform.length <= 0) {
+        const h3 = document.createElement('h3');
+        h3.innerHTML = 'No Notifications';
+        friendRequestList.append(h3);
+      }
       if (res.data.friendRequestsInform.length) {
         res.data.friendRequestsInform.forEach(e => {
           const li = document.createElement('li');
@@ -527,7 +537,6 @@ function getFriendStatuses() {
     url: '/getFriendStatus'
   }).then(res => {
     const statuses = res.data.friendStatuses;
-    console.log(statuses)
     const ID = statusWrapper.getAttribute('data-id');
     const userName = statusWrapper.getAttribute('data-name');
     const userSurname = statusWrapper.getAttribute('data-surname');
@@ -565,42 +574,86 @@ function getFriendStatuses() {
       p.innerHTML = s.status;
       p.classList.add('status-text');
 
-
       const img = document.createElement('img');
       div.append(img);
       img.src = s.status_image;
       img.classList.add('status-image');
+      img.addEventListener('click', () => {
+        modal.style.display = 'block';
+        modalImg.src = s.status_image;
+      });
 
-      const countOfLikes = document.createElement('b')
-      countOfLikes.innerHTML = s.count_of_likes
-      div.append(countOfLikes)
+      const like_comment_titles_div = document.createElement('div');
+      like_comment_titles_div.classList.add('like_comment_titles_div');
+      div.append(like_comment_titles_div);
 
-      const likeBtn = document.createElement('span')
-      div.appendChild(likeBtn)
-      likeBtn.innerHTML = '&#9996;'
-      
-      s.likeStatus ? likeBtn.className = 'unliked-btn' : likeBtn.className = 'liked-btn'
-
-
-      likeBtn.addEventListener('click', () => {
-        if(likeBtn.className === 'unliked-btn'){
-          likeBtn.className = 'liked-btn'
-          countOfLikes.innerHTML= Number(countOfLikes.innerHTML) - 1
-        }else{
-          likeBtn.className = 'unliked-btn'
-          countOfLikes.innerHTML= Number(countOfLikes.innerHTML) + 1
-        }
-        // likeBtn.className === 'unliked-btn' ? likeBtn.className = 'liked-btn' : likeBtn.className = 'unliked-btn'
-        axios({
-          method: 'post',
-          url: '/likeStatus',
-          data: {status_id: s.status_id}
-        })
-      })
+      const countOfLikes = document.createElement('b');
+      countOfLikes.innerHTML = s.count_of_likes + ' Likes';
+      countOfLikes.style.cursor = 'pointer';
+      like_comment_titles_div.append(countOfLikes);
 
       const ul = document.createElement('ul');
       ul.classList.add('comment-list-group');
       div.append(ul);
+      const likedUsersUL = document.createElement('ul');
+      div.append(likedUsersUL);
+      likedUsersUL.classList.add('list-group');
+
+      countOfLikes.addEventListener('click', () => {
+        likedUsersUL.innerHTML = '';
+        ul.innerHTML = '';
+        axios({
+          method: 'post',
+          url: '/getLikedUsers',
+          data: { status_id: s.status_id }
+        }).then(res => {
+          const likedUsers = res.data.likedUsers;
+          if (likedUsers.length) {
+            likedUsers.forEach(u => {
+              const li = document.createElement('li');
+              li.classList.add('liked-user-li');
+              likedUsersUL.append(li);
+              const likedUserA = document.createElement('a');
+              li.append(likedUserA);
+              likedUserA.innerHTML = u.name + ' ' + u.surname;
+              likedUserA.href = `/getFriendPage/${u.name}/${u.surname}/${u.ID}`;
+            });
+          }
+        });
+      });
+
+      const likeBtn = document.createElement('span');
+      like_comment_titles_div.append(likeBtn);
+      likeBtn.classList.add('fa');
+      likeBtn.classList.add('fa-thumbs-o-up');
+
+      const commentsTitle = document.createElement('h5');
+      commentsTitle.innerHTML = 'Comments';
+      commentsTitle.classList.add('comments-title');
+      like_comment_titles_div.append(commentsTitle);
+
+      s.likeStatus
+        ? likeBtn.classList.add('unliked-btn')
+        : likeBtn.classList.add('liked-btn');
+
+      likeBtn.addEventListener('click', () => {
+        if (likeBtn.classList.contains('unliked-btn')) {
+          likeBtn.classList.remove('unliked-btn');
+          likeBtn.classList.add('liked-btn');
+          countOfLikes.innerHTML =
+            parseInt(countOfLikes.innerHTML) - 1 + ' Likes';
+        } else {
+          likeBtn.classList.remove('liked-btn');
+          likeBtn.classList.add('unliked-btn');
+          countOfLikes.innerHTML =
+            parseInt(countOfLikes.innerHTML) + 1 + ' Likes';
+        }
+        axios({
+          method: 'post',
+          url: '/likeStatus',
+          data: { status_id: s.status_id }
+        });
+      });
 
       const commentWrapper = document.createElement('div');
       div.append(commentWrapper);
@@ -642,7 +695,9 @@ function getFriendStatuses() {
 
         input.value = '';
       });
-      p.addEventListener('click', e => {
+
+      commentsTitle.addEventListener('click', e => {
+        likedUsersUL.innerHTML = '';
         ul.innerHTML
           ? (ul.innerHTML = '')
           : axios({
@@ -651,14 +706,35 @@ function getFriendStatuses() {
               data: { status_id: s.status_id }
             }).then(res => {
               const comments = res.data.comments;
+              if (comments.length) {
+                commentsTitle.innerHTML = comments.length + ' ' + 'Comments';
+              }
               comments.forEach(c => {
                 const li = document.createElement('li');
                 li.classList.add('comment-list-item');
                 ul.append(li);
+
+                if (c.status_id == s.status_id && s.ID == ID) {
+                  const removeCommentBtn = document.createElement('button');
+                  removeCommentBtn.classList.add('removeCommentBtn');
+                  removeCommentBtn.innerHTML = 'X';
+                  li.append(removeCommentBtn);
+
+                  removeCommentBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    axios({
+                      method: 'post',
+                      url: '/removeComment',
+                      data: { comment_id: c.comment_id }
+                    }).then(() => {
+                      this.parentElement.remove();
+                    });
+                  });
+                }
                 const commentWriter = document.createElement('a');
                 li.append(commentWriter);
                 commentWriter.innerHTML = c.name + ' ' + c.surname;
-                commentWriter.href = '/profile';
+                commentWriter.href = `/getFriendPage/${c.name}/${c.surname}/${c.ID}`;
                 commentWriter.classList.add('comment-writer');
 
                 const commentText = document.createElement('p');
@@ -671,6 +747,14 @@ function getFriendStatuses() {
     });
   });
 }
+
+//config profile image modal view
+const profilePhotoWrapper = document.querySelector('.profilePhoto-wrapper');
+profilePhotoWrapper.style.cursor = 'pointer';
+profilePhotoWrapper.addEventListener('click', () => {
+  modal.style.display = 'block';
+  modalImg.src = document.querySelector('.profile-image').src;
+});
 
 // chat with socket io
 

@@ -469,6 +469,53 @@ footer {
   margin-top: 8px;
 }
 
+.like_comment_titles_div {
+  background: rgba(196, 191, 191, 0.582);
+  width: 300px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto;
+  border-radius: 5px;
+  padding: 0.5rem;
+  color: #ffffff;
+}
+.liked-user-li {
+  list-style-type: none;
+  width: 300px;
+  border-radius: 5px;
+  background: rgba(88, 158, 204, 0.5);
+  padding: 0.3rem;
+  margin: 0.1rem auto;
+}
+.liked-user-li a {
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 18px;
+}
+.liked-user-li a:hover {
+  text-decoration: none;
+  color: #051b20;
+}
+
+.removeCommentBtn {
+  background: #e20d42;
+  color: #ffffff;
+  border: none;
+  border-radius: 100%;
+  text-align: center;
+  padding: 0.3rem;
+  font-size: 18px;
+}
+
+.comments-title {
+  color: #ffffff;
+  font-size: 20px;
+  cursor: pointer;
+}
+.comments-title:hover {
+  color: #0de278;
+}
 /* Share new status END*/
 
 .status-wrapper {
@@ -498,13 +545,14 @@ footer {
 .status-text {
   font-size: 17px;
   color: #073f6d;
-  cursor: pointer;
+  white-space: pre-line;
 }
 
 .status-image {
   max-width: 500px;
   max-height: 500px;
   margin-bottom: 30px;
+  cursor: pointer;
 }
 .comment-wrapper {
   display: flex;
@@ -598,18 +646,17 @@ footer {
   background: #da2f5a;
 }
 
-
-.unliked-btn{
+.unliked-btn {
   font-size: 50px;
   color: #36b877;
   cursor: pointer;
-  background: #e20d42;
+  /* background: #e20d42; */
 }
-.liked-btn{
+.liked-btn {
   font-size: 50px;
-  color: #36b877;
+  color: #024925;
   cursor: pointer;
-  background: #0de278;
+  /* background: #0de278; */
 }
 
 /* Buttons END*/
@@ -644,6 +691,8 @@ footer {
   font-size: 40px;
   font-weight: bold;
   transition: 0.3s;
+  position: absolute;
+  right: 100px;
 }
 
 .close:hover,

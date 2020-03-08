@@ -34,6 +34,16 @@ const storageForStatuses = multer.diskStorage({
   }
 });
 
+const storageForHistoryImages = multer.diskStorage({
+  destination: 'public/uploads/historyImages',
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname + '-' + Date.now() + path.extname(file.originalname)
+    );
+  }
+});
+
 const upload = multer({ storage: storage }).single('profilePhoto');
 
 const uploadStatusImage = multer({ storage: storageForStatuses }).single(
@@ -41,6 +51,9 @@ const uploadStatusImage = multer({ storage: storageForStatuses }).single(
 );
 
 const uploadmyImage = multer({ storage: storageForImages }).single('myimage');
+const uploadHistoryImage = multer({ storage: storageForHistoryImages }).single(
+  'historyImage'
+);
 
 class Controller {
   getHomePage(req, res) {
@@ -201,9 +214,21 @@ class Controller {
           );
         });
       })();
+      const historyImage = await (function() {
+        return new Promise((resolve, reject) => {
+          connection.query(
+            `SELECT * FROM history WHERE user_id =${req.session.userId}`,
+            (err, data) => {
+              if (err) reject(err);
+              resolve(data);
+            }
+          );
+        });
+      })();
       res.render('profile', {
         user,
-        findedUsers: ''
+        findedUsers: '',
+        historyImage
       });
     } else {
       req.session.destroy();
@@ -376,19 +401,22 @@ class Controller {
   }
 
   async checkFriendRequests(req, res) {
-    const friendRequestsInform = await (function() {
-      return new Promise((resolve, reject) => {
-        connection.query(
-          `SELECT * FROM users JOIN requests ON users.ID = requests.user_one_id WHERE user_two_id = ${req.session.userId}`,
-          (err, data) => {
-            if (err) throw err;
-            resolve(data);
-          }
-        );
-      });
-    })();
-    res.send({ friendRequestsInform });
-    res.end();
+    if (req.session.userId) {
+      const friendRequestsInform = await (function() {
+        return new Promise((resolve, reject) => {
+          connection.query(
+            `SELECT * FROM users JOIN requests ON users.ID = requests.user_one_id WHERE user_two_id = ${req.session.userId}`,
+            (err, data) => {
+              if (err) throw err;
+              resolve(data);
+            }
+          );
+        });
+      })();
+      res.send({ friendRequestsInform });
+    } else {
+      res.end();
+    }
   }
 
   acceptFriendRequest(req, res) {
@@ -497,13 +525,13 @@ class Controller {
           }', '${req.session.userId}', '/uploads/statusImages/${
             req.file ? req.file.filename : 'statusImage.png'
           }')`,
-          (err, data) => {
-            if (err) throw err;
+          (error, data) => {
+            if (err) throw error;
           }
         );
-        res.redirect('/profile');
       }
     });
+    res.redirect('/profile');
   }
 
   async getFriendStatus(req, res) {
@@ -533,6 +561,7 @@ class Controller {
           );
         });
       })();
+      // console.log(friendStatuses);
       return res.send({ friendStatuses: statuses });
     }
     let friendStatuses = [];
@@ -540,11 +569,16 @@ class Controller {
       const status = await (function() {
         return new Promise((resolve, reject) => {
           connection.query(
-            `SELECT statuses.*,users.*,count(statuses.status_id) as count_of_likes FROM statuses
-            JOIN users ON users.ID = statuses.user_id
-            JOIN likes ON likes.status_id = statuses.status_id 
-            WHERE users.ID = '${e}'
-             GROUP BY statuses.status_id`,
+            // `SELECT statuses.*,users.*,count(statuses.status_id) as count_of_likes FROM statuses
+            // JOIN users ON users.ID = statuses.user_id
+            // JOIN likes ON likes.status_id = statuses.status_id
+            // WHERE users.ID = '${e}'
+            //  GROUP BY statuses.status_id`,
+            `SELECT statuses.*,users.*,count(likes.status_id) as count_of_likes FROM statuses
+            LEFT JOIN users ON users.ID = statuses.user_id
+            LEFT JOIN likes ON likes.status_id = statuses.status_id
+             WHERE users.ID = ${e}
+              GROUP BY statuses.status_id`,
             (err, data) => {
               if (err) reject(err);
               resolve(data);
@@ -553,8 +587,9 @@ class Controller {
         });
       })();
       status.forEach(l => friendStatuses.push(l));
+
       if (k === friendsID.length - 1) {
-        for(let i=0;i<friendStatuses.length;i++){
+        for (let i = 0; i < friendStatuses.length; i++) {
           const ifLikes = await (function() {
             return new Promise((resolve, reject) => {
               connection.query(
@@ -567,18 +602,16 @@ class Controller {
               );
             });
           })();
-          if(ifLikes.length){
-            friendStatuses[i].likeStatus = true
-          }else {
-            friendStatuses[i].likeStatus = false
+          if (ifLikes.length) {
+            friendStatuses[i].likeStatus = true;
+          } else {
+            friendStatuses[i].likeStatus = false;
           }
-
         }
 
         res.send({ friendStatuses });
       }
     });
-
   }
 
   async getComments(req, res) {
@@ -615,31 +648,117 @@ class Controller {
   }
 
   async likeStatus(req, res) {
-
-    const like = await (function(){
+    const like = await (function() {
       return new Promise((resolve, reject) => {
-        connection.query(`SELECT * FROM likes WHERE status_id = '${req.body.status_id}' AND user_id = '${req.session.userId}'`, (err, data) => {
-          if(err) throw err
-          resolve(data)
-        } )
-      })
-    })()
-    console.log(like)
-    if(like.length){
-      connection.query(`DELETE FROM likes WHERE like_id = '${like[0].like_id}'`, (err, data) => {
-        if(err) throw err
-
-      })
-      res.send()
-    }else{
-       connection.query(`INSERT INTO likes(user_id, status_id) VALUES('${req.session.userId}', '${req.body.status_id}')`, (err, data) => {
-          if(err) throw err
-      })
-    res.send()
+        connection.query(
+          `SELECT * FROM likes WHERE status_id = '${req.body.status_id}' AND user_id = '${req.session.userId}'`,
+          (err, data) => {
+            if (err) throw err;
+            resolve(data);
+          }
+        );
+      });
+    })();
+    if (like.length) {
+      connection.query(
+        `DELETE FROM likes WHERE like_id = '${like[0].like_id}'`,
+        (err, data) => {
+          if (err) throw err;
+        }
+      );
+      res.send();
+    } else {
+      connection.query(
+        `INSERT INTO likes(user_id, status_id) VALUES('${req.session.userId}', '${req.body.status_id}')`,
+        (err, data) => {
+          if (err) throw err;
+        }
+      );
+      res.send();
     }
+  }
 
-    
-    
+  async getLikedUsers(req, res) {
+    const likedUsers = await (function() {
+      return new Promise((resolve, reject) => {
+        connection.query(
+          `SELECT * FROM users JOIN likes ON users.ID = likes.user_id WHERE likes.status_id = ${req.body.status_id}`,
+          (err, data) => {
+            if (err) reject(err);
+            resolve(data);
+          }
+        );
+      });
+    })();
+    res.send({ likedUsers });
+  }
+  removeComment(req, res) {
+    connection.query(
+      `DELETE FROM comments WHERE comment_id = ${req.body.comment_id}`,
+      (err, data) => {
+        if (err) throw err;
+      }
+    );
+    res.send();
+  }
+
+  shareHistoryImage(req, res) {
+    uploadHistoryImage(req, res, async err => {
+      if (err) throw err;
+      if (req.file) {
+        const oldHistoryImage = await (function() {
+          return new Promise((resolve, reject) => {
+            connection.query(
+              `SELECT * FROM history WHERE user_id = ${req.session.userId}`,
+              (err, data) => {
+                if (err) reject(err);
+                resolve(data);
+              }
+            );
+          });
+        })();
+        let insertedId;
+        if (oldHistoryImage.length) {
+          insertedId = await (function() {
+            return new Promise((resolve, reject) => {
+              connection.query(
+                `UPDATE history SET history_profile_image = '/uploads/historyImages/${req.file.filename}' WHERE user_id = ${req.session.userId}`,
+                (err, data) => {
+                  if (err) reject(err);
+                  resolve(data.insertId);
+                }
+              );
+            });
+          })();
+        } else {
+          insertedId = await (function() {
+            return new Promise((resolve, reject) => {
+              connection.query(
+                `INSERT INTO history(user_id, history_profile_image) VALUES(${req.session.userId}, '/uploads/historyImages/${req.file.filename}') `,
+                (error, data) => {
+                  if (error) throw error;
+                  resolve(data.insertId);
+                }
+              );
+            });
+          })();
+        }
+        const one_day_milliseconds = 24 * 60 * 60 * 1000;
+        setTimeout(() => {
+          const pathImage = `./public/uploads/historyImages/${req.file.filename}`;
+          fs.unlink(pathImage, err => {
+            if (err) throw err;
+          });
+          connection.query(
+            `DELETE FROM history WHERE history_id = ${insertedId}`,
+            (error, data) => {
+              if (error) throw error;
+            }
+          );
+        }, one_day_milliseconds);
+      }
+      res.redirect('/profile');
+    });
   }
 }
 module.exports = new Controller();

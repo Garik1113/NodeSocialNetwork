@@ -39,12 +39,39 @@
               <div class="row ">
                 <div class="col-3">
                   <div class="profilePhoto-wrapper">
-                    <img
+                    <!-- <img
                       src="<%= user? user[0].profile_image ? user[0].profile_image : '/uploads/images/avatar.png' : '' %>"
+                      class="profile-image"
+                      alt=""
+                    /> -->
+                    <img
+                      src="<%= historyImage[0] ? historyImage[0].history_profile_image :  user? user[0].profile_image : '' %>"
                       class="profile-image"
                       alt=""
                     />
                   </div>
+                  <form
+                    class="share-status-form"
+                    enctype="multipart/form-data"
+                    method="POST"
+                    action="/shareHistoryImage"
+                  >
+                    <div class="upload-image-wrapper">
+                      <input
+                        type="file"
+                        name="historyImage"
+                        id="files"
+                        class="share-input-file"
+                      />
+                      <label for="files" class="js-labelFile btn-small-success">
+                        <span class="js-fileName">History Image</span>
+                      </label>
+                    </div>
+
+                    <button class="share-status-btn" type="submit">
+                      Share
+                    </button>
+                  </form>
                   <div class="name-wrapper d-flex align-items-center">
                     <a href="/profile" class="d-flex name-text-wrapper">
                       <h3 style="margin: 10px;" id="userName">
@@ -223,7 +250,10 @@
           <button id="saveChanges">Save</button>
         </div>
       </form>
-
+      <div class="modal-image" id="myModal">
+        <span class="closeSpan">&times;</span>
+        <img class="modal-content" id="img01" />
+      </div>
       <div class="images-wrapper">
         <div class="modal-image" id="myModal">
           <span class="closeSpan">&times;</span>
@@ -236,7 +266,7 @@
           enctype="multipart/form-data"
         >
           <input type="file" name="myimage" class="upload-reg-image-input" />
-          <input type="submit" value="send" />
+          <input type="submit" value="Add Image" />
         </form>
 
         <ul class="photos-list-group"></ul>
