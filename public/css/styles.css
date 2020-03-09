@@ -2,15 +2,18 @@
   margin: 0;
   padding: 0;
 }
+
 .navbar-wrapper {
   width: 100%;
   height: 50px;
   background: rgb(40, 201, 230);
 }
+
 .links {
   color: #ffffff;
   font-size: 18px;
 }
+
 .links:hover {
   color: #000000;
 }
@@ -30,6 +33,7 @@
   border-radius: 2px;
   text-align: center;
 }
+
 .input-type-text {
   width: 300px;
   height: 40px;
@@ -38,6 +42,7 @@
   border: none;
   border-bottom: 2px solid rgb(192, 19, 140);
 }
+
 .input-type-btn {
   width: 120px;
   height: 40px;
@@ -46,6 +51,7 @@
   border-radius: 5px;
   margin: 15px 115px;
 }
+
 .input-type-btn:hover {
   color: #ffffff;
 }
@@ -72,10 +78,12 @@ small {
   font-size: 18px;
   color: #000000;
 }
+
 .name-text-wrapper:hover {
   text-decoration: none;
   color: #000000;
 }
+
 .bg-yellow {
   background: #e2d40a;
 }
@@ -90,6 +98,7 @@ small {
   color: #0de278;
   text-decoration: none;
 }
+
 .main-wrapper {
   width: 100%;
   background: #e2d40a;
@@ -160,6 +169,7 @@ small {
   text-align: center;
   margin-bottom: 50px;
 }
+
 .image-list-item {
   list-style-type: none;
   margin: 0.5rem;
@@ -173,6 +183,7 @@ small {
   font-size: 20px;
   text-align: center;
 }
+
 .reg-image {
   width: 250px;
   height: 250px;
@@ -189,7 +200,7 @@ small {
   z-index: -1;
 }
 
-.upload-Photo-inputfile + label {
+.upload-Photo-inputfile+label {
   font-size: 1.25em;
   font-weight: 700;
   color: white;
@@ -201,8 +212,9 @@ small {
   background-color: rgb(184, 197, 6);
   display: inline-block;
 }
-.upload-Photo-inputfile:focus + label,
-.upload-Photo-inputfile + label:hover {
+
+.upload-Photo-inputfile:focus+label,
+.upload-Photo-inputfile+label:hover {
   background-color: rgb(217, 255, 0);
   color: #000000;
 }
@@ -241,6 +253,7 @@ small {
   width: 400px;
   margin: 0 auto;
 }
+
 .change-input-wrapper input {
   width: 400px;
   margin: 10px;
@@ -261,6 +274,7 @@ small {
 .change-input-wrapper button:hover {
   color: #000000;
 }
+
 .close {
   display: none;
 }
@@ -269,6 +283,7 @@ small {
   font-size: 20px;
   color: #0de278;
 }
+
 /* Change sittings end */
 
 /* profile page end */
@@ -283,9 +298,11 @@ footer {
   background: #e2d40a;
   margin-top: 100px;
 }
+
 .footer-item {
   text-align: center;
 }
+
 .footer-item a {
   text-decoration: none;
   color: #ffffff;
@@ -312,6 +329,7 @@ footer {
   text-align: center;
   height: 70px;
 }
+
 .friendRequestList {
   padding: 15px;
   background: #ffffff;
@@ -333,10 +351,12 @@ footer {
   background: #e2d40a;
   border: none;
 }
+
 .message-notes:hover {
   background: #e2d40a;
   color: #ffffff;
 }
+
 .friendRequestList-item {
   height: 45px;
   padding: 1rem;
@@ -363,10 +383,12 @@ footer {
   border-radius: 3px;
   margin-left: 10px;
 }
+
 .name {
   color: #000000;
   white-space: nowrap;
 }
+
 .green {
   background: green;
 }
@@ -389,10 +411,12 @@ footer {
   font-size: 18px;
   color: #ffffff;
 }
+
 .friend-link:hover {
   text-decoration: none;
   color: #ffffff;
 }
+
 .friend {
   height: 220px;
   width: 200px;
@@ -410,6 +434,7 @@ footer {
   height: 200px;
   border-radius: 50%;
 }
+
 .friend-name {
   color: #0de278;
   font-size: 18px;
@@ -437,6 +462,7 @@ footer {
   color: #0de278;
   padding-left: 5px;
 }
+
 .share-status-btn {
   width: 100px;
   height: 55px;
@@ -446,6 +472,7 @@ footer {
   margin-left: 2px;
   color: #ffffff;
 }
+
 .share-status-btn:hover {
   background: #36b877;
   color: #ffffff;
@@ -459,7 +486,8 @@ footer {
   position: absolute;
   z-index: -1;
 }
-.upload-image-wrapper .share-input-file + .js-labelFile {
+
+.upload-image-wrapper .share-input-file+.js-labelFile {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -480,6 +508,7 @@ footer {
   padding: 0.5rem;
   color: #ffffff;
 }
+
 .liked-user-li {
   list-style-type: none;
   width: 300px;
@@ -488,11 +517,13 @@ footer {
   padding: 0.3rem;
   margin: 0.1rem auto;
 }
+
 .liked-user-li a {
   color: #ffffff;
   cursor: pointer;
   font-size: 18px;
 }
+
 .liked-user-li a:hover {
   text-decoration: none;
   color: #051b20;
@@ -513,9 +544,11 @@ footer {
   font-size: 20px;
   cursor: pointer;
 }
+
 .comments-title:hover {
   color: #0de278;
 }
+
 /* Share new status END*/
 
 .status-wrapper {
@@ -554,14 +587,17 @@ footer {
   margin-bottom: 30px;
   cursor: pointer;
 }
+
 .comment-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .comment-list-group {
   text-align: center;
 }
+
 .comment-list-item {
   list-style-type: none;
   display: flex;
@@ -572,14 +608,17 @@ footer {
   background: #05c8eb;
   border-radius: 5px;
 }
+
 .comment-writer {
   color: #073f6d;
   font-size: 18px;
 }
+
 .comment-write:hover {
   text-decoration: none;
   color: #073f6d;
 }
+
 .comment-text {
   font-size: 18px;
   color: #ffffff;
@@ -601,6 +640,7 @@ footer {
   margin-left: 3px;
   color: #ffffff;
 }
+
 .comment-btn:hover {
   background: #0f663a;
 }
@@ -627,6 +667,7 @@ footer {
   padding: 0.5rem;
   background: #0de278;
 }
+
 .btn-small-success:hover {
   background: #36b877;
 }
@@ -642,6 +683,7 @@ footer {
   padding: 0.5rem;
   background: #e20d42;
 }
+
 .btn-small-warning:hover {
   background: #da2f5a;
 }
@@ -652,6 +694,7 @@ footer {
   cursor: pointer;
   /* background: #e20d42; */
 }
+
 .liked-btn {
   font-size: 50px;
   color: #024925;
@@ -664,17 +707,26 @@ footer {
 /* Modal image styles */
 
 .modal-image {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
+  padding-top: 100px;
+  /* Location of the box */
   left: 0;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0, 0, 0); /* Fallback color */
-  background-color: rgba(0, 0, 0, 0.9); /* Black w/ opacity */
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.9);
+  /* Black w/ opacity */
 }
 
 .modal-content {
@@ -721,6 +773,7 @@ footer {
   text-align: center;
   border-radius: 5px;
   margin: 0.5rem;
+  cursor: pointer;
 }
 
 .messages-right-content {
@@ -738,16 +791,19 @@ footer {
   left: 200px;
   margin-top: 100px;
 }
+
 .sendMessageText {
   width: 300px;
   padding: 0.5rem;
   color: #000000;
   border-radius: 3px;
 }
+
 .sendMessageBtn {
   padding: 0.5rem;
   border: none;
   border-radius: 3px;
   background: #0de278;
 }
+
 /* messages content END*/

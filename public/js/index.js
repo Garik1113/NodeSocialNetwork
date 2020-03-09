@@ -13,7 +13,7 @@ const modal = document.getElementById('myModal');
 const modalImg = document.getElementById('img01');
 
 const closeSpan = document.querySelectorAll('.closeSpan')[0];
-closeSpan.onclick = function() {
+closeSpan.onclick = function () {
   modal.style.display = 'none';
 };
 
@@ -23,10 +23,12 @@ searchInput.addEventListener('input', async e => {
   let value = searchInput.value;
   let findedUsers;
   await axios({
-    method: 'post',
-    url: '/SearchUser',
-    data: { value }
-  })
+      method: 'post',
+      url: '/SearchUser',
+      data: {
+        value
+      }
+    })
     .then(res => {
       findedUsers = res.data.findedUsers;
 
@@ -76,12 +78,15 @@ searchInput.addEventListener('input', async e => {
           li.append(deslineReqBtn);
         }
       });
+
       function sendRequestFunction() {
         let user_two_id = this.getAttribute('data-id');
         axios({
           method: 'post',
           url: '/sendRequest',
-          data: { user_two_id }
+          data: {
+            user_two_id
+          }
         });
         let cancelBtn = document.createElement('button');
         cancelBtn.innerHTML = 'Cancel';
@@ -98,7 +103,9 @@ searchInput.addEventListener('input', async e => {
         axios({
           method: 'post',
           url: '/removeRequest',
-          data: { user_two_id }
+          data: {
+            user_two_id
+          }
         });
         let sendReqBtn = document.createElement('button');
         sendReqBtn.innerHTML = 'Send Request';
@@ -115,7 +122,9 @@ searchInput.addEventListener('input', async e => {
         axios({
           method: 'post',
           url: '/removeFriend',
-          data: { userId }
+          data: {
+            userId
+          }
         });
         let sendReqBtn = document.createElement('button');
         sendReqBtn.innerHTML = 'Send Request';
@@ -132,7 +141,9 @@ searchInput.addEventListener('input', async e => {
         axios({
           method: 'post',
           url: '/acceptFriendRequest',
-          data: { user_two_id }
+          data: {
+            user_two_id
+          }
         });
         let removeFriendBtn = document.createElement('button');
         removeFriendBtn.innerHTML = 'Remove';
@@ -150,7 +161,9 @@ searchInput.addEventListener('input', async e => {
         axios({
           method: 'post',
           url: '/deslineFriendRequest',
-          data: { user_two_id }
+          data: {
+            user_two_id
+          }
         });
         let sendReqBtn = document.createElement('button');
         sendReqBtn.innerHTML = 'Send Request';
@@ -238,13 +251,13 @@ photosBtn.addEventListener('click', e => {
 
           const modal = document.getElementById('myModal');
           const modalImg = document.getElementById('img01');
-          img.onclick = function() {
+          img.onclick = function () {
             modal.style.display = 'block';
             modalImg.src = this.src;
           };
 
           const closeSpan = document.querySelectorAll('.closeSpan')[0];
-          closeSpan.onclick = function() {
+          closeSpan.onclick = function () {
             modal.style.display = 'none';
           };
 
@@ -258,10 +271,12 @@ photosBtn.addEventListener('click', e => {
             deleteBtn.parentNode.remove();
             i.preventDefault();
             axios({
-              method: 'post',
-              url: '/deleteImage',
-              data: { imagePath: e.image_path }
-            })
+                method: 'post',
+                url: '/deleteImage',
+                data: {
+                  imagePath: e.image_path
+                }
+              })
               .then(res => (small.innerHTML = res.data))
               .catch(e => console.log(e));
           });
@@ -276,16 +291,18 @@ photosBtn.addEventListener('click', e => {
               .setAttribute('src', e.image_path);
             l.preventDefault();
             axios({
-              method: 'post',
-              url: '/SetAsProfilePic',
-              data: { imagePath: e.image_path }
-            })
+                method: 'post',
+                url: '/SetAsProfilePic',
+                data: {
+                  imagePath: e.image_path
+                }
+              })
               .then(res => {
                 document
                   .querySelectorAll('.inform-about-updates')
                   .forEach(e => (e.innerHTML = ''))(
-                  (small.innerHTML = res.data)
-                );
+                    (small.innerHTML = res.data)
+                  );
               })
 
               .catch(e => console.log(e));
@@ -315,9 +332,9 @@ sittingsBtn.addEventListener('click', async e => {
   let userInform;
 
   await axios({
-    method: 'post',
-    url: '/getUserInform'
-  })
+      method: 'post',
+      url: '/getUserInform'
+    })
     .then(res => {
       userInform = res.data.userInform[0];
       nameInput.value = userInform.name;
@@ -341,14 +358,20 @@ saveChangesbtn.addEventListener('click', e => {
   const ageError = document.getElementById('ageError');
   const errors = validationBeforeSave(name, surname, age);
   if (Object.keys(errors).length === 0) {
-    const user = { name, surname, age };
+    const user = {
+      name,
+      surname,
+      age
+    };
     nameError.innerHTML = '';
     surnameError.innerHTML = '';
     ageError.innerHTML = '';
     axios({
       method: 'post',
       url: '/saveChanges',
-      data: { user }
+      data: {
+        user
+      }
     }).then(res => {
       document.querySelector('.name-text-wrapper').children[0].innerHTML = name;
       document.querySelector(
@@ -391,9 +414,9 @@ notiсeBtn.addEventListener('click', e => {
   e.preventDefault();
   friendRequestList.innerHTML = '';
   axios({
-    method: 'post',
-    url: '/checkFriendRequests'
-  })
+      method: 'post',
+      url: '/checkFriendRequests'
+    })
     .then(res => {
       if (res.data.friendRequestsInform.length <= 0) {
         const h3 = document.createElement('h3');
@@ -430,7 +453,9 @@ notiсeBtn.addEventListener('click', e => {
             axios({
               method: 'post',
               url: '/acceptFriendRequest',
-              data: { user_two_id: e.ID }
+              data: {
+                user_two_id: e.ID
+              }
             });
           });
 
@@ -439,7 +464,9 @@ notiсeBtn.addEventListener('click', e => {
             axios({
               method: 'post',
               url: '/deslineFriendRequest',
-              data: { user_two_id: e.ID }
+              data: {
+                user_two_id: e.ID
+              }
             });
           });
         });
@@ -492,7 +519,9 @@ friendsBtn.addEventListener('click', e => {
         axios({
           method: 'post',
           url: '/removeFriend',
-          data: { userId: k.ID }
+          data: {
+            userId: k.ID
+          }
         });
       });
     });
@@ -505,6 +534,7 @@ const commentListWrapper = document.querySelector('.comment-list-wrapper');
 newsBtn.addEventListener('click', getFriendStatuses);
 window.onload = () => {
   statusWrapper.innerHTML = '';
+
   function checkFriendRequests() {
     axios({
       method: 'post',
@@ -557,7 +587,9 @@ function getFriendStatuses() {
           axios({
             method: 'post',
             url: '/removeStatus',
-            data: { status_id: s.status_id }
+            data: {
+              status_id: s.status_id
+            }
           });
           span.parentElement.remove();
         });
@@ -605,7 +637,9 @@ function getFriendStatuses() {
         axios({
           method: 'post',
           url: '/getLikedUsers',
-          data: { status_id: s.status_id }
+          data: {
+            status_id: s.status_id
+          }
         }).then(res => {
           const likedUsers = res.data.likedUsers;
           if (likedUsers.length) {
@@ -632,9 +666,9 @@ function getFriendStatuses() {
       commentsTitle.classList.add('comments-title');
       like_comment_titles_div.append(commentsTitle);
 
-      s.likeStatus
-        ? likeBtn.classList.add('unliked-btn')
-        : likeBtn.classList.add('liked-btn');
+      s.likeStatus ?
+        likeBtn.classList.add('unliked-btn') :
+        likeBtn.classList.add('liked-btn');
 
       likeBtn.addEventListener('click', () => {
         if (likeBtn.classList.contains('unliked-btn')) {
@@ -651,7 +685,9 @@ function getFriendStatuses() {
         axios({
           method: 'post',
           url: '/likeStatus',
-          data: { status_id: s.status_id }
+          data: {
+            status_id: s.status_id
+          }
         });
       });
 
@@ -698,51 +734,55 @@ function getFriendStatuses() {
 
       commentsTitle.addEventListener('click', e => {
         likedUsersUL.innerHTML = '';
-        ul.innerHTML
-          ? (ul.innerHTML = '')
-          : axios({
-              method: 'post',
-              url: '/getComents',
-              data: { status_id: s.status_id }
-            }).then(res => {
-              const comments = res.data.comments;
-              if (comments.length) {
-                commentsTitle.innerHTML = comments.length + ' ' + 'Comments';
-              }
-              comments.forEach(c => {
-                const li = document.createElement('li');
-                li.classList.add('comment-list-item');
-                ul.append(li);
+        ul.innerHTML ?
+          (ul.innerHTML = '') :
+          axios({
+            method: 'post',
+            url: '/getComents',
+            data: {
+              status_id: s.status_id
+            }
+          }).then(res => {
+            const comments = res.data.comments;
+            if (comments.length) {
+              commentsTitle.innerHTML = comments.length + ' ' + 'Comments';
+            }
+            comments.forEach(c => {
+              const li = document.createElement('li');
+              li.classList.add('comment-list-item');
+              ul.append(li);
 
-                if (c.status_id == s.status_id && s.ID == ID) {
-                  const removeCommentBtn = document.createElement('button');
-                  removeCommentBtn.classList.add('removeCommentBtn');
-                  removeCommentBtn.innerHTML = 'X';
-                  li.append(removeCommentBtn);
+              if (c.status_id == s.status_id && s.ID == ID) {
+                const removeCommentBtn = document.createElement('button');
+                removeCommentBtn.classList.add('removeCommentBtn');
+                removeCommentBtn.innerHTML = 'X';
+                li.append(removeCommentBtn);
 
-                  removeCommentBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    axios({
-                      method: 'post',
-                      url: '/removeComment',
-                      data: { comment_id: c.comment_id }
-                    }).then(() => {
-                      this.parentElement.remove();
-                    });
+                removeCommentBtn.addEventListener('click', function (e) {
+                  e.preventDefault();
+                  axios({
+                    method: 'post',
+                    url: '/removeComment',
+                    data: {
+                      comment_id: c.comment_id
+                    }
+                  }).then(() => {
+                    this.parentElement.remove();
                   });
-                }
-                const commentWriter = document.createElement('a');
-                li.append(commentWriter);
-                commentWriter.innerHTML = c.name + ' ' + c.surname;
-                commentWriter.href = `/getFriendPage/${c.name}/${c.surname}/${c.ID}`;
-                commentWriter.classList.add('comment-writer');
+                });
+              }
+              const commentWriter = document.createElement('a');
+              li.append(commentWriter);
+              commentWriter.innerHTML = c.name + ' ' + c.surname;
+              commentWriter.href = `/getFriendPage/${c.name}/${c.surname}/${c.ID}`;
+              commentWriter.classList.add('comment-writer');
 
-                const commentText = document.createElement('p');
-                li.append(commentText);
-                commentText.classList.add('comment-text');
-                commentText.innerHTML = c.comment;
-              });
+              const commentText = document.createElement('p');
+              li.append(commentText);
+              commentText.classList.add('comment-text');
+              commentText.innerHTML = c.comment;
             });
+          });
       });
     });
   });
@@ -766,6 +806,8 @@ const messagesListGroup = document.querySelector('.messagel-list-group');
 const messagesContentBtn = document.getElementById('messages-btn');
 const MessageFriendsGroup = document.querySelector('.message-friends-group');
 
+//Message friend id
+let friend_id;
 messagesContentBtn.addEventListener('click', e => {
   e.preventDefault();
   changeForm.classList.add('close');
@@ -785,11 +827,17 @@ messagesContentBtn.addEventListener('click', e => {
       MessageFriendsGroup.append(li);
       li.classList.add('message-friends-list-item');
       li.innerHTML = e.name + ' ' + e.surname;
+      li.addEventListener('click', () => {
+        friend_id = e.ID
+      })
     });
   });
 });
 
 sendMessageBtn.addEventListener('click', e => {
   e.preventDefault();
-  socket.emit('new_message', sendMessageInput.value);
+  socket.emit('new_message', {
+    message: sendMessageInput.value,
+    friend_id
+  });
 });
