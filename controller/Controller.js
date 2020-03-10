@@ -50,20 +50,20 @@ const upload = multer({
 
 const uploadStatusImage = multer({
   storage: storageForStatuses
-}).single(
-  'statusImage'
-);
+}).single('statusImage');
 
 const uploadmyImage = multer({
   storage: storageForImages
 }).single('myimage');
 const uploadHistoryImage = multer({
   storage: storageForHistoryImages
-}).single(
-  'historyImage'
-);
+}).single('historyImage');
 
 class Controller {
+  constructor() {
+    this.Database = Database;
+    this.connection = connection;
+  }
   getHomePage(req, res) {
     req.session.destroy();
     return res.render('index');
@@ -111,7 +111,7 @@ class Controller {
       }
     );
     res.send('deleted');
-    const profileImage = await (function () {
+    const profileImage = await (function() {
       return new Promise((resolve, reject) => {
         connection.query(
           `SELECT profile_image FROM users WHERE ID = ${req.session.userId}`,
@@ -149,7 +149,7 @@ class Controller {
     const name = req.body.value;
     if (name) {
       let findedUsers = [];
-      const searchingUsers = await (function () {
+      const searchingUsers = await (function() {
         return new Promise((resolve, reject) => {
           connection.query(
             `SELECT * FROM users WHERE(name LIKE '${name}%' or surname LIKE '${name}%') AND ID != ${req.session.userId} LIMIT 0,5 `,
@@ -161,7 +161,7 @@ class Controller {
         });
       })();
       await searchingUsers.map(async (i, e) => {
-        let friend = await (function () {
+        let friend = await (function() {
           return new Promise((resolve, reject) => {
             connection.query(
               `SELECT * FROM relationships WHERE (user_one_id=${i.ID} and user_two_id = ${req.session.userId}) or(user_one_id=${req.session.userId} and user_two_id = ${i.ID}) `,
@@ -172,7 +172,7 @@ class Controller {
             );
           });
         })();
-        let request = await (function () {
+        let request = await (function() {
           return new Promise((resolve, reject) => {
             connection.query(
               `SELECT * FROM requests WHERE (user_one_id=${i.ID} and user_two_id = ${req.session.userId}) or(user_one_id=${req.session.userId} and user_two_id = ${i.ID}) `,
@@ -213,7 +213,7 @@ class Controller {
 
   async getProfilePage(req, res) {
     if (req.session.userId) {
-      const user = await (function () {
+      const user = await (function() {
         return new Promise((resolve, reject) => {
           connection.query(
             `SELECT * FROM users WHERE ID = '${req.session.userId}'`,
@@ -224,7 +224,7 @@ class Controller {
           );
         });
       })();
-      const historyImage = await (function () {
+      const historyImage = await (function() {
         return new Promise((resolve, reject) => {
           connection.query(
             `SELECT * FROM history WHERE user_id =${req.session.userId}`,
@@ -247,7 +247,7 @@ class Controller {
   }
 
   async getPhotosPage(req, res) {
-    const photosPath = await (function () {
+    const photosPath = await (function() {
       return new Promise((resolve, reject) => {
         connection.query(
           `SELECT * FROM images WHERE user_id = '${req.session.userId}'`,
@@ -264,7 +264,7 @@ class Controller {
   }
 
   async getUserInform(req, res) {
-    const userInform = await (function () {
+    const userInform = await (function() {
       return new Promise((resolve, reject) => {
         connection.query(
           `SELECT * FROM users WHERE ID = '${req.session.userId}'`,
@@ -294,14 +294,8 @@ class Controller {
   }
 
   async setUser(req, res) {
-    const {
-      name,
-      surname,
-      age,
-      email,
-      password
-    } = req.body;
-    const data = await (function () {
+    const { name, surname, age, email, password } = req.body;
+    const data = await (function() {
       return new Promise((res, rej) => {
         connection.query(
           `SELECT * FROM users WHERE email = '${email}'`,
@@ -329,7 +323,7 @@ class Controller {
 
     const hashedPassword = passwordHash.generate(password);
 
-    const addedUser = await (function () {
+    const addedUser = await (function() {
       return new Promise((resolve, reject) => {
         connection.query(
           `INSERT INTO users(name, surname, age, email, password)
@@ -371,11 +365,8 @@ class Controller {
     res.render('invalidPage');
   }
   async tryLogin(req, res) {
-    const {
-      email,
-      password
-    } = req.body;
-    let user = await (function () {
+    const { email, password } = req.body;
+    let user = await (function() {
       return new Promise((resolve, reject) => {
         connection.query(
           `SELECT * FROM users WHERE email = '${email}'`,
@@ -434,7 +425,7 @@ class Controller {
 
   async checkFriendRequests(req, res) {
     if (req.session.userId) {
-      const friendRequestsInform = await (function () {
+      const friendRequestsInform = await (function() {
         return new Promise((resolve, reject) => {
           connection.query(
             `SELECT * FROM users JOIN requests ON users.ID = requests.user_one_id WHERE user_two_id = ${req.session.userId}`,
@@ -479,7 +470,7 @@ class Controller {
   }
 
   async getFriendList(req, res) {
-    const friendList = await (function () {
+    const friendList = await (function() {
       return new Promise((resolve, reject) => {
         connection.query(
           `SELECT * FROM relationships WHERE user_one_id = '${req.session.userId}' or user_two_id = '${req.session.userId}'`,
@@ -498,7 +489,7 @@ class Controller {
 
     let friends = [];
     ids.forEach(async e => {
-      let user = await (function () {
+      let user = await (function() {
         return new Promise((resolve, reject) => {
           connection.query(
             `SELECT * FROM users WHERE ID = '${e}'`,
@@ -529,16 +520,12 @@ class Controller {
   }
 
   async getFriendPage(req, res) {
-    const {
-      name,
-      surname,
-      friendId
-    } = req.params;
+    const { name, surname, friendId } = req.params;
     if (friendId == req.session.userId) {
       return res.redirect('/profile');
     }
     if (req.session.userId) {
-      const friend = await (function () {
+      const friend = await (function() {
         return new Promise((resolve, reject) => {
           connection.query(
             `SELECT * FROM users WHERE ID= '${friendId}'`,
@@ -561,17 +548,21 @@ class Controller {
     uploadStatusImage(req, res, err => {
       if (err) throw err;
       if (req.file || req.body.status) {
-        let videoTeg = ''
-        let statusText = req.body.status
+        let videoTeg = '';
+        let statusText = req.body.status;
         if (statusText.includes('v=')) {
-          const listIndex = statusText.search('&list')
-          const index = statusText.search('v=')
+          const listIndex = statusText.search('&list');
+          const index = statusText.search('v=');
           if (listIndex !== -1) {
-            videoTeg = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${statusText.substring(index+2, listIndex)}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+            videoTeg = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${statusText.substring(
+              index + 2,
+              listIndex
+            )}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
           } else {
-            videoTeg = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${statusText.substring(index+2)}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+            videoTeg = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${statusText.substring(
+              index + 2
+            )}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
           }
-
         }
         connection.query(
           `INSERT INTO statuses(status, user_id, status_image) VALUES('${
@@ -589,7 +580,7 @@ class Controller {
   }
 
   async getFriendStatus(req, res) {
-    const friends = await (function () {
+    const friends = await (function() {
       return new Promise((resolve, reject) => {
         connection.query(
           `SELECT * FROM relationships WHERE user_one_id = '${req.session.userId}' OR user_two_id = '${req.session.userId}'`,
@@ -604,7 +595,7 @@ class Controller {
     let friendsID = [...new Set(friends.map(e => Object.values(e)).flat())];
 
     if (!friendsID.length) {
-      const statuses = await (function () {
+      const statuses = await (function() {
         return new Promise((resolve, reject) => {
           connection.query(
             `SELECT * FROM statuses JOIN users ON users.ID = statuses.user_id WHERE user_id = '${req.session.userId}'`,
@@ -622,7 +613,7 @@ class Controller {
     }
     let friendStatuses = [];
     friendsID.map(async (e, k) => {
-      const status = await (function () {
+      const status = await (function() {
         return new Promise((resolve, reject) => {
           connection.query(
             // `SELECT statuses.*,users.*,count(statuses.status_id) as count_of_likes FROM statuses
@@ -646,7 +637,7 @@ class Controller {
 
       if (k === friendsID.length - 1) {
         for (let i = 0; i < friendStatuses.length; i++) {
-          const ifLikes = await (function () {
+          const ifLikes = await (function() {
             return new Promise((resolve, reject) => {
               connection.query(
                 `SELECT * from likes
@@ -673,7 +664,7 @@ class Controller {
   }
 
   async getComments(req, res) {
-    const comments = await (function () {
+    const comments = await (function() {
       return new Promise((resolve, reject) => {
         connection.query(
           `SELECT * FROM comments JOIN users ON user_id = ID WHERE status_id = '${req.body.status_id}'`,
@@ -708,7 +699,7 @@ class Controller {
   }
 
   async likeStatus(req, res) {
-    const like = await (function () {
+    const like = await (function() {
       return new Promise((resolve, reject) => {
         connection.query(
           `SELECT * FROM likes WHERE status_id = '${req.body.status_id}' AND user_id = '${req.session.userId}'`,
@@ -739,7 +730,7 @@ class Controller {
   }
 
   async getLikedUsers(req, res) {
-    const likedUsers = await (function () {
+    const likedUsers = await (function() {
       return new Promise((resolve, reject) => {
         connection.query(
           `SELECT * FROM users JOIN likes ON users.ID = likes.user_id WHERE likes.status_id = ${req.body.status_id}`,
@@ -768,7 +759,7 @@ class Controller {
     uploadHistoryImage(req, res, async err => {
       if (err) throw err;
       if (req.file) {
-        const oldHistoryImage = await (function () {
+        const oldHistoryImage = await (function() {
           return new Promise((resolve, reject) => {
             connection.query(
               `SELECT * FROM history WHERE user_id = ${req.session.userId}`,
@@ -781,7 +772,7 @@ class Controller {
         })();
         let insertedId;
         if (oldHistoryImage.length) {
-          insertedId = await (function () {
+          insertedId = await (function() {
             return new Promise((resolve, reject) => {
               connection.query(
                 `UPDATE history SET history_profile_image = '/uploads/historyImages/${req.file.filename}' WHERE user_id = ${req.session.userId}`,
@@ -793,7 +784,7 @@ class Controller {
             });
           })();
         } else {
-          insertedId = await (function () {
+          insertedId = await (function() {
             return new Promise((resolve, reject) => {
               connection.query(
                 `INSERT INTO history(user_id, history_profile_image) VALUES(${req.session.userId}, '/uploads/historyImages/${req.file.filename}') `,
@@ -823,4 +814,5 @@ class Controller {
     });
   }
 }
-module.exports = new Controller();
+// module.exports = new Controller();
+module.exports = Controller;

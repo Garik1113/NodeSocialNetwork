@@ -11,7 +11,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const app = express();
-const Controller = require('./controller/Controller');
+const ClassController = require('./controller/Controller');
+const Controller = new ClassController();
 const PORT = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
@@ -19,14 +20,18 @@ app.set('trust proxy', 1);
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
-app.use(session({
-  secret: '123',
-  resave: false,
-  saveUninitialized: true
-}));
+app.use(
+  bodyParser.urlencoded({
+    extended: true
+  })
+);
+app.use(
+  session({
+    secret: '123',
+    resave: false,
+    saveUninitialized: true
+  })
+);
 
 app.get('/', Controller.getHomePage);
 app.get('/signup', Controller.getSignupPage);
@@ -82,13 +87,9 @@ const io = require('socket.io')(http);
 io.on('connection', socket => {
   // socke.join
   socket.on('new_message', data => {
-
     console.log('Client says', data);
 
     // socket.broadcast.to('um').emit('namak')
-
-
-
   });
 });
 
