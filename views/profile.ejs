@@ -273,10 +273,12 @@
       </div>
       <div class="friends-page-wrapper"></div>
     </div>
-
+<p class='my_id' data-id="<%=user? user[0].ID : ''%>"></p>
     <%- include('./partials/footer') %>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="/js/socket.io.js"></script>
+    
+    <script src="/socket.io/socket.io.js"></script>
+
     <script src="/js/index.js"></script>
   </body>
 </html>

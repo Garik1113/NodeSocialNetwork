@@ -808,6 +808,7 @@ const MessageFriendsGroup = document.querySelector('.message-friends-group');
 
 //Message friend id
 let friend_id;
+const my_id = document.querySelector('.my_id').getAttribute('data-id')
 messagesContentBtn.addEventListener('click', e => {
   e.preventDefault();
   changeForm.classList.add('close');
@@ -829,15 +830,27 @@ messagesContentBtn.addEventListener('click', e => {
       li.innerHTML = e.name + ' ' + e.surname;
       li.addEventListener('click', () => {
         friend_id = e.ID
+
+        socket.emit('get_friend_messages', {my_id, friend_id})
       })
     });
   });
+
+
+
 });
 
 sendMessageBtn.addEventListener('click', e => {
-  e.preventDefault();
+e.preventDefault()
   socket.emit('new_message', {
     message: sendMessageInput.value,
     friend_id
   });
+  sendMessageInput.value = ''
 });
+
+
+socket.on('newmessageclient',function(data){
+  alert()
+  console.log(data)
+})

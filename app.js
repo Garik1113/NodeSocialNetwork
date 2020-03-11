@@ -81,16 +81,11 @@ app.post('/shareHistoryImage', Controller.shareHistoryImage);
 
 // chat socket io
 
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+var server = require('http').Server(app);
+const io = require('socket.io')(server);
+const SocketController = require('./controller/SocketController')
 
-io.on('connection', socket => {
-  // socke.join
-  socket.on('new_message', data => {
-    console.log('Client says', data);
 
-    // socket.broadcast.to('um').emit('namak')
-  });
-});
+io.on('connection', SocketController.connect)
 
-http.listen(PORT);
+server.listen(PORT);
