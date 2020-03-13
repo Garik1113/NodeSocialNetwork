@@ -200,7 +200,7 @@ small {
   z-index: -1;
 }
 
-.upload-Photo-inputfile+label {
+.upload-Photo-inputfile + label {
   font-size: 1.25em;
   font-weight: 700;
   color: white;
@@ -213,8 +213,8 @@ small {
   display: inline-block;
 }
 
-.upload-Photo-inputfile:focus+label,
-.upload-Photo-inputfile+label:hover {
+.upload-Photo-inputfile:focus + label,
+.upload-Photo-inputfile + label:hover {
   background-color: rgb(217, 255, 0);
   color: #000000;
 }
@@ -487,7 +487,7 @@ footer {
   z-index: -1;
 }
 
-.upload-image-wrapper .share-input-file+.js-labelFile {
+.upload-image-wrapper .share-input-file + .js-labelFile {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -804,6 +804,28 @@ footer {
   border: none;
   border-radius: 3px;
   background: #0de278;
+}
+
+.chat-window {
+  width: 400px;
+  height: 500px;
+  background: #ffffff;
+  box-sizing: border-box;
+  box-shadow: 10px 10px 5px 10px;
+  /* margin: 20px; */
+  position: fixed;
+  right: 50px;
+  bottom: 50px;
+  z-index: 200;
+  padding: 2rem;
+}
+.chat-close {
+  font-size: 50px;
+  position: absolute;
+  top: -20px;
+  right: 0;
+  color: #000000;
+  cursor: pointer;
 }
 
 /* messages content END*/

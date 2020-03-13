@@ -13,7 +13,7 @@ const modal = document.getElementById('myModal');
 const modalImg = document.getElementById('img01');
 
 const closeSpan = document.querySelectorAll('.closeSpan')[0];
-closeSpan.onclick = function () {
+closeSpan.onclick = function() {
   modal.style.display = 'none';
 };
 
@@ -23,12 +23,12 @@ searchInput.addEventListener('input', async e => {
   let value = searchInput.value;
   let findedUsers;
   await axios({
-      method: 'post',
-      url: '/SearchUser',
-      data: {
-        value
-      }
-    })
+    method: 'post',
+    url: '/SearchUser',
+    data: {
+      value
+    }
+  })
     .then(res => {
       findedUsers = res.data.findedUsers;
 
@@ -251,13 +251,13 @@ photosBtn.addEventListener('click', e => {
 
           const modal = document.getElementById('myModal');
           const modalImg = document.getElementById('img01');
-          img.onclick = function () {
+          img.onclick = function() {
             modal.style.display = 'block';
             modalImg.src = this.src;
           };
 
           const closeSpan = document.querySelectorAll('.closeSpan')[0];
-          closeSpan.onclick = function () {
+          closeSpan.onclick = function() {
             modal.style.display = 'none';
           };
 
@@ -271,12 +271,12 @@ photosBtn.addEventListener('click', e => {
             deleteBtn.parentNode.remove();
             i.preventDefault();
             axios({
-                method: 'post',
-                url: '/deleteImage',
-                data: {
-                  imagePath: e.image_path
-                }
-              })
+              method: 'post',
+              url: '/deleteImage',
+              data: {
+                imagePath: e.image_path
+              }
+            })
               .then(res => (small.innerHTML = res.data))
               .catch(e => console.log(e));
           });
@@ -291,18 +291,18 @@ photosBtn.addEventListener('click', e => {
               .setAttribute('src', e.image_path);
             l.preventDefault();
             axios({
-                method: 'post',
-                url: '/SetAsProfilePic',
-                data: {
-                  imagePath: e.image_path
-                }
-              })
+              method: 'post',
+              url: '/SetAsProfilePic',
+              data: {
+                imagePath: e.image_path
+              }
+            })
               .then(res => {
                 document
                   .querySelectorAll('.inform-about-updates')
                   .forEach(e => (e.innerHTML = ''))(
-                    (small.innerHTML = res.data)
-                  );
+                  (small.innerHTML = res.data)
+                );
               })
 
               .catch(e => console.log(e));
@@ -332,9 +332,9 @@ sittingsBtn.addEventListener('click', async e => {
   let userInform;
 
   await axios({
-      method: 'post',
-      url: '/getUserInform'
-    })
+    method: 'post',
+    url: '/getUserInform'
+  })
     .then(res => {
       userInform = res.data.userInform[0];
       nameInput.value = userInform.name;
@@ -414,9 +414,9 @@ notiсeBtn.addEventListener('click', e => {
   e.preventDefault();
   friendRequestList.innerHTML = '';
   axios({
-      method: 'post',
-      url: '/checkFriendRequests'
-    })
+    method: 'post',
+    url: '/checkFriendRequests'
+  })
     .then(res => {
       if (res.data.friendRequestsInform.length <= 0) {
         const h3 = document.createElement('h3');
@@ -475,9 +475,23 @@ notiсeBtn.addEventListener('click', e => {
     .catch(e => console.log(e));
 });
 
-//Get friends list
-const friendsBtn = document.getElementById('friends-btn');
+// profile user inform
+const ID = statusWrapper.getAttribute('data-id');
+const userName = statusWrapper.getAttribute('data-name');
+const userSurname = statusWrapper.getAttribute('data-surname');
+// profile user inform END
 
+//Get friends list
+//Socket
+const socket = io('http://localhost:3000');
+//Socket
+const friendsBtn = document.getElementById('friends-btn');
+const chatWindow = document.querySelector('.chat-window');
+const closeChat = document.querySelector('.chat-close');
+const chatWindowList = document.querySelector('.chat-window-list');
+closeChat.addEventListener('click', () => {
+  chatWindow.classList.add('close');
+});
 friendsBtn.addEventListener('click', e => {
   friendsPageWrapper.innerHTML = '';
   imagesWrapper.classList.add('close');
@@ -508,6 +522,14 @@ friendsBtn.addEventListener('click', e => {
       a.innerHTML = k.name + ' ' + k.surname;
       a.style.color = '#000000';
       a.href = `/getFriendPage/${k.name}/${k.surname}/${k.ID}`;
+      const chatBtn = document.createElement('button');
+      chatBtn.innerHTML = 'Message';
+      chatBtn.classList.add('btn-small-success');
+      div.append(chatBtn);
+      chatBtn.addEventListener('click', () => {
+        socket.emit('get_friend_messages', { my_id: ID, friend_id: k.ID });
+        chatWindow.classList.remove('close');
+      });
       const removeBtn = document.createElement('button');
       removeBtn.innerHTML = 'Remove Friend';
       removeBtn.classList.add('btn');
@@ -567,9 +589,6 @@ function getFriendStatuses() {
     url: '/getFriendStatus'
   }).then(res => {
     const statuses = res.data.friendStatuses;
-    const ID = statusWrapper.getAttribute('data-id');
-    const userName = statusWrapper.getAttribute('data-name');
-    const userSurname = statusWrapper.getAttribute('data-surname');
     statuses.forEach(s => {
       const div = document.createElement('div');
       div.classList.add('alert');
@@ -666,9 +685,9 @@ function getFriendStatuses() {
       commentsTitle.classList.add('comments-title');
       like_comment_titles_div.append(commentsTitle);
 
-      s.likeStatus ?
-        likeBtn.classList.add('unliked-btn') :
-        likeBtn.classList.add('liked-btn');
+      s.likeStatus
+        ? likeBtn.classList.add('unliked-btn')
+        : likeBtn.classList.add('liked-btn');
 
       likeBtn.addEventListener('click', () => {
         if (likeBtn.classList.contains('unliked-btn')) {
@@ -734,55 +753,55 @@ function getFriendStatuses() {
 
       commentsTitle.addEventListener('click', e => {
         likedUsersUL.innerHTML = '';
-        ul.innerHTML ?
-          (ul.innerHTML = '') :
-          axios({
-            method: 'post',
-            url: '/getComents',
-            data: {
-              status_id: s.status_id
-            }
-          }).then(res => {
-            const comments = res.data.comments;
-            if (comments.length) {
-              commentsTitle.innerHTML = comments.length + ' ' + 'Comments';
-            }
-            comments.forEach(c => {
-              const li = document.createElement('li');
-              li.classList.add('comment-list-item');
-              ul.append(li);
-
-              if (c.status_id == s.status_id && s.ID == ID) {
-                const removeCommentBtn = document.createElement('button');
-                removeCommentBtn.classList.add('removeCommentBtn');
-                removeCommentBtn.innerHTML = 'X';
-                li.append(removeCommentBtn);
-
-                removeCommentBtn.addEventListener('click', function (e) {
-                  e.preventDefault();
-                  axios({
-                    method: 'post',
-                    url: '/removeComment',
-                    data: {
-                      comment_id: c.comment_id
-                    }
-                  }).then(() => {
-                    this.parentElement.remove();
-                  });
-                });
+        ul.innerHTML
+          ? (ul.innerHTML = '')
+          : axios({
+              method: 'post',
+              url: '/getComents',
+              data: {
+                status_id: s.status_id
               }
-              const commentWriter = document.createElement('a');
-              li.append(commentWriter);
-              commentWriter.innerHTML = c.name + ' ' + c.surname;
-              commentWriter.href = `/getFriendPage/${c.name}/${c.surname}/${c.ID}`;
-              commentWriter.classList.add('comment-writer');
+            }).then(res => {
+              const comments = res.data.comments;
+              if (comments.length) {
+                commentsTitle.innerHTML = comments.length + ' ' + 'Comments';
+              }
+              comments.forEach(c => {
+                const li = document.createElement('li');
+                li.classList.add('comment-list-item');
+                ul.append(li);
 
-              const commentText = document.createElement('p');
-              li.append(commentText);
-              commentText.classList.add('comment-text');
-              commentText.innerHTML = c.comment;
+                if (c.status_id == s.status_id && s.ID == ID) {
+                  const removeCommentBtn = document.createElement('button');
+                  removeCommentBtn.classList.add('removeCommentBtn');
+                  removeCommentBtn.innerHTML = 'X';
+                  li.append(removeCommentBtn);
+
+                  removeCommentBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    axios({
+                      method: 'post',
+                      url: '/removeComment',
+                      data: {
+                        comment_id: c.comment_id
+                      }
+                    }).then(() => {
+                      this.parentElement.remove();
+                    });
+                  });
+                }
+                const commentWriter = document.createElement('a');
+                li.append(commentWriter);
+                commentWriter.innerHTML = c.name + ' ' + c.surname;
+                commentWriter.href = `/getFriendPage/${c.name}/${c.surname}/${c.ID}`;
+                commentWriter.classList.add('comment-writer');
+
+                const commentText = document.createElement('p');
+                li.append(commentText);
+                commentText.classList.add('comment-text');
+                commentText.innerHTML = c.comment;
+              });
             });
-          });
       });
     });
   });
@@ -798,17 +817,15 @@ profilePhotoWrapper.addEventListener('click', () => {
 
 // chat with socket io
 
-const socket = io('http://localhost:3000');
-
 const sendMessageBtn = document.querySelector('.sendMessageBtn');
 const sendMessageInput = document.querySelector('.sendMessageText');
-const messagesListGroup = document.querySelector('.messagel-list-group');
+const messagesListGroup = document.querySelector('.messages-list-group');
 const messagesContentBtn = document.getElementById('messages-btn');
 const MessageFriendsGroup = document.querySelector('.message-friends-group');
+messagesListGroup.classList.add('list-group');
 
-//Message friend id
 let friend_id;
-const my_id = document.querySelector('.my_id').getAttribute('data-id')
+
 messagesContentBtn.addEventListener('click', e => {
   e.preventDefault();
   changeForm.classList.add('close');
@@ -818,6 +835,7 @@ messagesContentBtn.addEventListener('click', e => {
   statusWrapper.classList.add('close');
   messageWrapper.classList.remove('close');
   MessageFriendsGroup.innerHTML = '';
+
   axios({
     method: 'post',
     url: '/getFriendList'
@@ -829,28 +847,57 @@ messagesContentBtn.addEventListener('click', e => {
       li.classList.add('message-friends-list-item');
       li.innerHTML = e.name + ' ' + e.surname;
       li.addEventListener('click', () => {
-        friend_id = e.ID
-
-        socket.emit('get_friend_messages', {my_id, friend_id})
-      })
+        messagesListGroup.innerHTML = '';
+        friend_id = e.ID;
+        socket.emit('get_friend_messages', { my_id: ID, friend_id });
+      });
     });
   });
-
-
-
 });
 
 sendMessageBtn.addEventListener('click', e => {
-e.preventDefault()
+  e.preventDefault();
   socket.emit('new_message', {
     message: sendMessageInput.value,
-    friend_id
+    friend_id,
+    my_id: ID
   });
-  sendMessageInput.value = ''
+  sendMessageInput.value = '';
 });
 
+socket.on('get_new_message', function(data) {
+  const li = document.createElement('li');
+  li.classList.add('list-group-item');
+  messagesListGroup.append(li);
+  const b = document.createElement('b');
+  li.append(b);
+  console.log(data);
+  if (data.newMessage.my_id == ID) {
+    b.innerHTML = userName + ' ' + userSurname;
+  } else {
+    b.innerHTML = data.friend.name + ' ' + data.friend.surname;
+  }
+  const p = document.createElement('p');
+  li.append(p);
+  p.innerHTML = data.newMessage.message;
+});
 
-socket.on('newmessageclient',function(data){
-  alert()
-  console.log(data)
-})
+socket.on('get_messages', function(data) {
+  const { messages, friend } = data;
+  messages.forEach(e => {
+    const li = document.createElement('li');
+    li.classList.add('list-group-item');
+    // messagesListGroup.append(li);
+    chatWindowList.append(li);
+    const b = document.createElement('b');
+    li.append(b);
+    if (e.user_one_id == ID) {
+      b.innerHTML = userName + ' ' + userSurname;
+    } else {
+      b.innerHTML = friend[0].name + ' ' + friend[0].surname;
+    }
+    const p = document.createElement('p');
+    li.append(p);
+    p.innerHTML = e.message;
+  });
+});

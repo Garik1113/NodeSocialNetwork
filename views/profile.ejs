@@ -210,7 +210,7 @@
           <div class="col-8">
             <div class="messages-right-content">
               <div class="messages">
-                <ul class="messagel-list-group"></ul>
+                <ul class="messages-list-group"></ul>
               </div>
               <div class="sendMessageWrapper">
                 <form class="send-message-form">
@@ -272,11 +272,14 @@
         <ul class="photos-list-group"></ul>
       </div>
       <div class="friends-page-wrapper"></div>
+      <div class="chat-window close">
+        <span class="chat-close">&times;</span>
+        <ul class="chat-window-list"></ul>
+      </div>
     </div>
-<p class='my_id' data-id="<%=user? user[0].ID : ''%>"></p>
     <%- include('./partials/footer') %>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    
+
     <script src="/socket.io/socket.io.js"></script>
 
     <script src="/js/index.js"></script>
