@@ -866,20 +866,19 @@ sendMessageBtn.addEventListener('click', e => {
 });
 
 socket.on('get_new_message', function(data) {
+  const newMessage = data.newMessage[0]
   const li = document.createElement('li');
   li.classList.add('list-group-item');
   messagesListGroup.append(li);
+
   const b = document.createElement('b');
   li.append(b);
-  console.log(data);
-  if (data.newMessage.my_id == ID) {
-    b.innerHTML = userName + ' ' + userSurname;
-  } else {
-    b.innerHTML = data.friend.name + ' ' + data.friend.surname;
-  }
+  b.innerHTML = newMessage.name + ' ' + newMessage.surname;
+  
   const p = document.createElement('p');
   li.append(p);
-  p.innerHTML = data.newMessage.message;
+  p.innerHTML = newMessage.message;
+
 });
 
 socket.on('get_messages', function(data) {
@@ -887,8 +886,7 @@ socket.on('get_messages', function(data) {
   messages.forEach(e => {
     const li = document.createElement('li');
     li.classList.add('list-group-item');
-    // messagesListGroup.append(li);
-    chatWindowList.append(li);
+    messagesListGroup.append(li);
     const b = document.createElement('b');
     li.append(b);
     if (e.user_one_id == ID) {

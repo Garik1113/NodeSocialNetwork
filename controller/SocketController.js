@@ -30,40 +30,41 @@ class SocketController extends Controller {
           );
         });
       })();
-
+      socket.join(data.my_id)
       socket.emit('get_messages', { messages, friend });
     });
 
     socket.on('new_message', async new_massage => {
-      connection.query(
-        `INSERT INTO messages(user_one_id, user_two_id, message) VALUES(${new_massage.my_id}, ${new_massage.friend_id}, '${new_massage.message}')`,
-        (err, dataa) => {
-          if (err) throw err;
-        }
-      );
-
-      const friend = await (function() {
-        return new Promise((resolve, reject) => {
-          connection.query(
-            `SELECT * FROM users WHERE ID = ${new_massage.friend_id}`,
-            (err, dataa) => {
+      const friend_id = await function (){
+        return new Promise((resolve,reject) => {
+         connection.query(
+          `INSERT INTO messages(user_one_id, user_two_id, message, date_time) VALUES(${new_massage.my_id}, ${new_massage.friend_id}, '${new_massage.message}', ${Date(Date.now())})`,
+            (err, msg) => {
               if (err) throw err;
-              resolve(dataa);
+                resolve(msg.insertId)
             }
-          );
-        });
-      })();
+          ); 
+        })
+      }()
+      
+      const message = await function (){
+        return new Promise((resolve,reject) => {
+          connection.query(`SELECT * FROM messages JOIN users ON user_one_id = ID WHERE messages.message_id = ${friend_id}`, (err, data) => {
+            if(err) throw err
+            resolve(data)
+          })
+        })
+      }()
+     
+
       socket.emit('get_new_message', {
-        newMessage: new_massage,
-        friend: friend[0]
+        newMessage: message,
       });
-      socket.broadcast.emit('get_new_message', {
-        newMessage: new_massage,
-        friend: friend[0]
-      });
-      // socket.broadcast
-      //   .to(data.friend_id)
-      //   .emit('newmessageclient', data.message);
+      socket.broadcast
+        .to(new_massage.friend_id)
+        .emit('get_new_message', {
+          newMessage: message
+        });
     });
   };
 }
